@@ -1,0 +1,18 @@
+{
+  "sourceProjectUrl": "https://fvtnzndwstxrvaacgrwb.supabase.co",
+  "exportedAt": "2026-03-30T22:31:20.368Z",
+  "counts": {
+    "menu_categories": 8,
+    "menu_items": 63,
+    "best_sellers": 6,
+    "gallery": 8,
+    "coffee_guide": 9,
+    "feedback": 6
+  },
+  "inaccessibleNotes": {
+    "admin_users": "Protected by RLS and requires authenticated admin access on the source project.",
+    "orders": "Not publicly readable on the source project; requires authenticated/admin access to export.",
+    "contact_messages": "Not publicly readable on the source project; requires authenticated/admin access to export.",
+    "feedback_pending": "Only approved feedback rows are visible publicly because of RLS."
+  }
+}

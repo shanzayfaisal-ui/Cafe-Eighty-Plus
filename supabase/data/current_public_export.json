@@ -1,0 +1,1048 @@
+{
+  "menu_categories": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "Hot Coffee",
+      "cartable": false,
+      "display_order": 1
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Coffee",
+      "cartable": false,
+      "display_order": 2
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "name": "Frappes",
+      "cartable": false,
+      "display_order": 3
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444444",
+      "name": "Smoothies",
+      "cartable": false,
+      "display_order": 4
+    },
+    {
+      "id": "55555555-5555-5555-5555-555555555555",
+      "name": "Sweet & Baked",
+      "cartable": false,
+      "display_order": 5
+    },
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
+      "name": "Savory Snacks",
+      "cartable": false,
+      "display_order": 6
+    },
+    {
+      "id": "77777777-7777-7777-7777-777777777777",
+      "name": "Coffee Beans",
+      "cartable": true,
+      "display_order": 7
+    },
+    {
+      "id": "88888888-8888-8888-8888-888888888888",
+      "name": "Merchandise",
+      "cartable": true,
+      "display_order": 8
+    }
+  ],
+  "menu_items": [
+    {
+      "id": "ab98ac39-a4bc-455d-8d09-8b6ea0bb2d8f",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Walnut Brownie",
+      "description": "Rich chocolate brownie topped with crunchy walnuts.",
+      "price": "Rs. 650",
+      "price_num": 650,
+      "image_key": "walnut_brownie",
+      "display_order": 1
+    },
+    {
+      "id": "98a51a1e-0c6d-4ce5-93c9-d1201132af68",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Espresso",
+      "description": "Rich, bold shot of pure espresso with a smooth crema.",
+      "price": "Rs. 510",
+      "price_num": 510,
+      "image_key": "espresso",
+      "display_order": 1
+    },
+    {
+      "id": "44121722-8231-44dd-8b46-646805f322c9",
+      "category_id": "77777777-7777-7777-7777-777777777777",
+      "name": "House Blend 250g",
+      "description": "Medium roasted blend for smooth, balanced coffee.",
+      "price": "Rs. 1800",
+      "price_num": 1800,
+      "image_key": "house_blend",
+      "display_order": 1
+    },
+    {
+      "id": "8313c229-2e37-4c32-ae99-dff3a5a76331",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Americano",
+      "description": "Chilled espresso diluted with water, crisp and refreshing.",
+      "price": "Rs. 530",
+      "price_num": 530,
+      "image_key": "americano_cold",
+      "display_order": 1
+    },
+    {
+      "id": "1d0e7745-ddfe-47b0-9292-00833a358db9",
+      "category_id": "66666666-6666-6666-6666-666666666666",
+      "name": "Grilled Chicken Sandwich",
+      "description": "Toasty sandwich with grilled chicken and fresh veggies.",
+      "price": "Rs. 900",
+      "price_num": 900,
+      "image_key": "sandwich",
+      "display_order": 1
+    },
+    {
+      "id": "ffa88c9e-7563-44cb-b504-cc4f339e5d48",
+      "category_id": "44444444-4444-4444-4444-444444444444",
+      "name": "Banana & Strawberry",
+      "description": "Creamy banana and fresh strawberry smoothie.",
+      "price": "Rs. 1050",
+      "price_num": 1050,
+      "image_key": "banana_strawberry",
+      "display_order": 1
+    },
+    {
+      "id": "c2584388-4746-4078-8e16-535fb2dd1309",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Mocha Frappe",
+      "description": "Blended iced coffee with chocolatey goodness.",
+      "price": "Rs. 950",
+      "price_num": 950,
+      "image_key": "mocha_frappe",
+      "display_order": 1
+    },
+    {
+      "id": "2d1dbdaa-addf-44bf-995e-47987605cdd3",
+      "category_id": "88888888-8888-8888-8888-888888888888",
+      "name": "Ceramic Mug",
+      "description": "Elegant mug for enjoying your favorite coffee.",
+      "price": "Rs. 1200",
+      "price_num": 1200,
+      "image_key": "mug",
+      "display_order": 1
+    },
+    {
+      "id": "81173323-0ff1-4f81-89e8-e1534d7d1803",
+      "category_id": "66666666-6666-6666-6666-666666666666",
+      "name": "Chicken Tikka Bites",
+      "description": "Spicy chicken tikka pieces, perfect as a snack.",
+      "price": "Rs. 850",
+      "price_num": 850,
+      "image_key": "tikka_bites",
+      "display_order": 2
+    },
+    {
+      "id": "ddacb367-7ad9-48a6-be4c-adcdc7f8fae4",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Matcha Frappe",
+      "description": "Iced, blended matcha latte with creamy texture.",
+      "price": "Rs. 1050",
+      "price_num": 1050,
+      "image_key": "matcha_frappe",
+      "display_order": 2
+    },
+    {
+      "id": "2a9d471a-2a54-434c-855e-f593e5bea24c",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Macchiato",
+      "description": "Espresso topped with a small amount of frothy milk.",
+      "price": "Rs. 550",
+      "price_num": 550,
+      "image_key": "macchiato",
+      "display_order": 2
+    },
+    {
+      "id": "3c299518-e6b8-4e73-b616-c86512279f4b",
+      "category_id": "88888888-8888-8888-8888-888888888888",
+      "name": "Travel Tumbler",
+      "description": "Portable tumbler to enjoy coffee on the go.",
+      "price": "Rs. 1800",
+      "price_num": 1800,
+      "image_key": "tumbler",
+      "display_order": 2
+    },
+    {
+      "id": "98d579c9-f7f8-4d14-826b-f49160c6b728",
+      "category_id": "77777777-7777-7777-7777-777777777777",
+      "name": "Single Origin Ethiopia",
+      "description": "Premium Ethiopian beans with floral notes.",
+      "price": "Rs. 2000",
+      "price_num": 2000,
+      "image_key": "ethiopia",
+      "display_order": 2
+    },
+    {
+      "id": "fdeac588-2dae-4d17-98c8-707d6191ebb2",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Ferrero Rocher Brownie",
+      "description": "Chocolatey brownie with Ferrero Rocher pieces.",
+      "price": "Rs. 700",
+      "price_num": 700,
+      "image_key": "ferrero_brownie",
+      "display_order": 2
+    },
+    {
+      "id": "9659826d-8ad4-40ae-84f4-2d0ff1fb377f",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Long Black",
+      "description": "Strong espresso over ice with bold, aromatic flavor.",
+      "price": "Rs. 530",
+      "price_num": 530,
+      "image_key": "long_black_cold",
+      "display_order": 2
+    },
+    {
+      "id": "2780e877-a490-47da-83f2-9627260bd321",
+      "category_id": "44444444-4444-4444-4444-444444444444",
+      "name": "Mix Berries",
+      "description": "Smoothie blended with a mix of juicy berries.",
+      "price": "Rs. 950",
+      "price_num": 950,
+      "image_key": "mixed_berries",
+      "display_order": 2
+    },
+    {
+      "id": "d24655b5-49f5-4c93-98ae-c4d2e5a1c117",
+      "category_id": "66666666-6666-6666-6666-666666666666",
+      "name": "Loaded Fries",
+      "description": "Crispy fries topped with cheese, sauces, and toppings.",
+      "price": "Rs. 700",
+      "price_num": 700,
+      "image_key": "loaded_fries",
+      "display_order": 3
+    },
+    {
+      "id": "56027ce1-0332-4784-92a5-c3bc033d11f3",
+      "category_id": "88888888-8888-8888-8888-888888888888",
+      "name": "Canvas Tote",
+      "description": "Stylish tote bag for daily use and coffee runs.",
+      "price": "Rs. 1000",
+      "price_num": 1000,
+      "image_key": "tote",
+      "display_order": 3
+    },
+    {
+      "id": "19a8736b-4657-45c4-898f-31d926ca3ef8",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Latte",
+      "description": "Cold espresso mixed with chilled milk over ice.",
+      "price": "Rs. 750",
+      "price_num": 750,
+      "image_key": "latte_cold",
+      "display_order": 3
+    },
+    {
+      "id": "feb374d3-25a6-468c-aff7-607e479ced0e",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Americano",
+      "description": "Smooth espresso diluted with hot water for a mellow taste.",
+      "price": "Rs. 510",
+      "price_num": 510,
+      "image_key": "americano",
+      "display_order": 3
+    },
+    {
+      "id": "2734b4b0-c4d6-4384-a36c-367e83658728",
+      "category_id": "77777777-7777-7777-7777-777777777777",
+      "name": "Colombian Supremo",
+      "description": "High-quality Colombian beans with rich flavor.",
+      "price": "Rs. 1900",
+      "price_num": 1900,
+      "image_key": "colombia",
+      "display_order": 3
+    },
+    {
+      "id": "e328886a-dd39-4dbd-9d69-9eddefbf2013",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Cookies & Cream Frappe",
+      "description": "Blended frappe with cookies and cream flavor.",
+      "price": "Rs. 950",
+      "price_num": 950,
+      "image_key": "cookies_cream",
+      "display_order": 3
+    },
+    {
+      "id": "dd50a0a7-fa99-4775-87c4-b777e81f62d4",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Three Milk (Lotus)",
+      "description": "Soft cake soaked in three kinds of milk with Lotus flavor.",
+      "price": "Rs. 750",
+      "price_num": 750,
+      "image_key": "three_milk",
+      "display_order": 3
+    },
+    {
+      "id": "9159b770-d772-4f2d-8910-1dfb5fbe1ce6",
+      "category_id": "44444444-4444-4444-4444-444444444444",
+      "name": "Natural Kick",
+      "description": "Healthy smoothie with natural fruits and energy boost.",
+      "price": "Rs. 900",
+      "price_num": 900,
+      "image_key": "natural_kick",
+      "display_order": 3
+    },
+    {
+      "id": "c17a6b50-0574-4082-b608-919bc18c9d34",
+      "category_id": "88888888-8888-8888-8888-888888888888",
+      "name": "Brew Kit",
+      "description": "Complete kit to brew coffee at home like a pro.",
+      "price": "Rs. 5000",
+      "price_num": 5000,
+      "image_key": "brew_kit",
+      "display_order": 4
+    },
+    {
+      "id": "2582493c-6cce-4abb-bb29-bd554596dc02",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Long Black",
+      "description": "Strong espresso with hot water, bold and aromatic.",
+      "price": "Rs. 510",
+      "price_num": 510,
+      "image_key": "long_black",
+      "display_order": 4
+    },
+    {
+      "id": "eead0a29-bb29-4e1e-950f-6158331f0545",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Flavored Latte",
+      "description": "Iced latte with your choice of delicious flavors.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "flavored_latte_cold",
+      "display_order": 4
+    },
+    {
+      "id": "ef984483-f8ad-405b-b8c8-0d56acef3666",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Peach Ice",
+      "description": "Refreshing peach-flavored blended ice drink.",
+      "price": "Rs. 580",
+      "price_num": 580,
+      "image_key": "peach_ice",
+      "display_order": 4
+    },
+    {
+      "id": "46283a27-08c0-48d3-ac9f-46616a43967f",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Banana Walnut Bread",
+      "description": "Moist banana bread with crunchy walnut bits.",
+      "price": "Rs. 600",
+      "price_num": 600,
+      "image_key": "banana_bread",
+      "display_order": 4
+    },
+    {
+      "id": "8dfca14b-f16c-4bd2-8dbc-7db1b793950b",
+      "category_id": "66666666-6666-6666-6666-666666666666",
+      "name": "Samosa (2 pcs)",
+      "description": "Golden, crispy samosas with savory filling.",
+      "price": "Rs. 300",
+      "price_num": 300,
+      "image_key": "samosa",
+      "display_order": 4
+    },
+    {
+      "id": "a58b6670-65f4-4964-b86a-29dcb26a5de2",
+      "category_id": "77777777-7777-7777-7777-777777777777",
+      "name": "Dark Roast 250g",
+      "description": "Bold dark roasted coffee beans for strong brews.",
+      "price": "Rs. 1700",
+      "price_num": 1700,
+      "image_key": "dark_roast",
+      "display_order": 4
+    },
+    {
+      "id": "9ca3a80e-4965-43f1-a9cf-34663c18318d",
+      "category_id": "66666666-6666-6666-6666-666666666666",
+      "name": "Chicken Samosa (2 pcs)",
+      "description": "Crispy samosas stuffed with spiced chicken.",
+      "price": "Rs. 350",
+      "price_num": 350,
+      "image_key": "chicken_samosa",
+      "display_order": 5
+    },
+    {
+      "id": "63262fe8-3f66-45a1-922b-5736d3c3b82f",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Lemon Ice",
+      "description": "Citrusy blended ice drink with zesty lemon flavor.",
+      "price": "Rs. 580",
+      "price_num": 580,
+      "image_key": "lemon_ice",
+      "display_order": 5
+    },
+    {
+      "id": "6a9e8b86-1c05-402c-9e99-095485353fac",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Cappuccino",
+      "description": "Espresso with cold milk and frothy ice topping.",
+      "price": "Rs. 860",
+      "price_num": 860,
+      "image_key": "cappuccino_cold",
+      "display_order": 5
+    },
+    {
+      "id": "b4cb8e23-890c-46e0-81ab-40e2271886ea",
+      "category_id": "77777777-7777-7777-7777-777777777777",
+      "name": "Espresso Blend 500g",
+      "description": "Special blend roasted for perfect espresso shots.",
+      "price": "Rs. 3200",
+      "price_num": 3200,
+      "image_key": "espresso_blend",
+      "display_order": 5
+    },
+    {
+      "id": "60b1a42a-1345-49b4-9acc-40f8bb4fca07",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Cortado",
+      "description": "Espresso cut with equal parts warm milk for balance.",
+      "price": "Rs. 580",
+      "price_num": 580,
+      "image_key": "cortado",
+      "display_order": 5
+    },
+    {
+      "id": "f2780d52-ada3-4262-9ab0-7d9ebdf70e11",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Choco Chip Cookie",
+      "description": "Classic cookie loaded with chocolate chips.",
+      "price": "Rs. 400",
+      "price_num": 400,
+      "image_key": "cookie",
+      "display_order": 5
+    },
+    {
+      "id": "f4333153-da42-4583-a7c4-7891163c346b",
+      "category_id": "33333333-3333-3333-3333-333333333333",
+      "name": "Raspberry Ice",
+      "description": "Sweet and tangy raspberry blended ice beverage.",
+      "price": "Rs. 580",
+      "price_num": 580,
+      "image_key": "raspberry_ice",
+      "display_order": 6
+    },
+    {
+      "id": "84288fdc-7f15-4c82-ace0-86d69b5babad",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Spanish Latte",
+      "description": "Sweet cold latte with espresso and condensed milk.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "spanish_latte_cold",
+      "display_order": 6
+    },
+    {
+      "id": "a72fbbdc-c81e-410f-8497-b8f200e1bdf3",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Flat White",
+      "description": "Velvety espresso drink with steamed milk and silky microfoam.",
+      "price": "Rs. 700",
+      "price_num": 700,
+      "image_key": "flat_white",
+      "display_order": 6
+    },
+    {
+      "id": "e0918b68-5321-460e-a614-ac2b9199fc0f",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Chocolate Peanut Bar",
+      "description": "Sweet chocolate bar with crunchy peanuts.",
+      "price": "Rs. 450",
+      "price_num": 450,
+      "image_key": "peanut_bar",
+      "display_order": 6
+    },
+    {
+      "id": "9ddd3ff4-b38f-4e33-bbd1-84ddbbf11466",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Lotus Biscoff",
+      "description": "Chilled latte infused with Lotus Biscoff syrup.",
+      "price": "Rs. 780",
+      "price_num": 780,
+      "image_key": "lotus_cold",
+      "display_order": 7
+    },
+    {
+      "id": "a71f18a9-66e5-487e-bd99-329da7d14454",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Latte",
+      "description": "Creamy espresso latte topped with smooth milk foam.",
+      "price": "Rs. 720",
+      "price_num": 720,
+      "image_key": "latte",
+      "display_order": 7
+    },
+    {
+      "id": "736f72a5-77cb-49b4-a589-7153a6ab624a",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Chocolate Crunch Bar",
+      "description": "Chocolate bar with a crispy, crunchy texture.",
+      "price": "Rs. 450",
+      "price_num": 450,
+      "image_key": "crunch_bar",
+      "display_order": 7
+    },
+    {
+      "id": "cca63482-8ed2-4270-8d79-6962a7056627",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Flavored Latte",
+      "description": "Latte infused with your choice of delicious flavors.",
+      "price": "Rs. 760",
+      "price_num": 760,
+      "image_key": "flavored_latte",
+      "display_order": 8
+    },
+    {
+      "id": "52c2901b-26fd-48e8-a9fa-f51ee94229dc",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Roasted Hazelnut Bar",
+      "description": "Nutty chocolate bar with roasted hazelnuts.",
+      "price": "Rs. 450",
+      "price_num": 450,
+      "image_key": "hazelnut_bar",
+      "display_order": 8
+    },
+    {
+      "id": "261aa790-f689-4353-8d7a-656f005636c4",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Peanut Butter",
+      "description": "Iced espresso latte blended with creamy peanut butter.",
+      "price": "Rs. 840",
+      "price_num": 840,
+      "image_key": "peanut_butter_cold",
+      "display_order": 8
+    },
+    {
+      "id": "35d06b63-2528-49a2-a9cb-631c8bf7634a",
+      "category_id": "55555555-5555-5555-5555-555555555555",
+      "name": "Chicken Bread Bun",
+      "description": "Savory bun stuffed with flavorful chicken filling.",
+      "price": "Rs. 500",
+      "price_num": 500,
+      "image_key": "bread_bun",
+      "display_order": 9
+    },
+    {
+      "id": "bd79ec59-512c-4d33-91d1-a0def6e7ed67",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Honey Latte",
+      "description": "Cold latte sweetened naturally with honey.",
+      "price": "Rs. 840",
+      "price_num": 840,
+      "image_key": "honey_cold",
+      "display_order": 9
+    },
+    {
+      "id": "26c1ddc1-0061-4126-bd67-a2e333db0139",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Cappuccino",
+      "description": "Classic espresso with steamed milk and light foam topping.",
+      "price": "Rs. 820",
+      "price_num": 820,
+      "image_key": "cappuccino",
+      "display_order": 9
+    },
+    {
+      "id": "644657e6-a0cf-43c0-a817-993f0fef0eb2",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Spanish Latte",
+      "description": "Sweet espresso latte with a touch of condensed milk.",
+      "price": "Rs. 720",
+      "price_num": 720,
+      "image_key": "spanish_latte",
+      "display_order": 10
+    },
+    {
+      "id": "7d43bd98-1770-4bfa-901f-320818db82c6",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Mocha",
+      "description": "Chocolatey iced espresso with milk and ice.",
+      "price": "Rs. 780",
+      "price_num": 780,
+      "image_key": "mocha_cold",
+      "display_order": 10
+    },
+    {
+      "id": "3e55446f-0224-4c2b-8875-c17822294930",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Honey Mocha",
+      "description": "Sweet iced mocha with a touch of honey.",
+      "price": "Rs. 850",
+      "price_num": 850,
+      "image_key": "iced_honey_mocha",
+      "display_order": 11
+    },
+    {
+      "id": "b6161b62-e726-4ef4-8929-be725667c1c7",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Lotus Biscoff Latte",
+      "description": "Espresso latte with smooth Lotus Biscoff flavor.",
+      "price": "Rs. 750",
+      "price_num": 750,
+      "image_key": "lotus",
+      "display_order": 11
+    },
+    {
+      "id": "494c4082-a0d8-4834-bf6d-5196e7abea69",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Peanut Butter Latte",
+      "description": "Espresso latte blended with creamy peanut butter.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "peanut_butter",
+      "display_order": 12
+    },
+    {
+      "id": "fa35c700-3302-4b9c-8ce9-3a9c7cf185c4",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Chocolate",
+      "description": "Chilled rich chocolate drink over ice.",
+      "price": "Rs. 900",
+      "price_num": 900,
+      "image_key": "iced_chocolate",
+      "display_order": 12
+    },
+    {
+      "id": "a5cee658-7025-4f29-b5be-c44b796e5a26",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Iced Matcha",
+      "description": "Refreshing iced green tea latte with matcha.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "matcha_cold",
+      "display_order": 13
+    },
+    {
+      "id": "05c0617f-56c7-4f53-9c1e-ac758bf24590",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Honey Latte",
+      "description": "Sweet and comforting latte infused with honey.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "honey_latte",
+      "display_order": 13
+    },
+    {
+      "id": "e0e22e73-cc21-4bf0-a23c-24290fb5a8ee",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Strawberry Matcha",
+      "description": "Iced matcha latte with fresh strawberry flavor.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "strawberry_matcha",
+      "display_order": 14
+    },
+    {
+      "id": "3f6db61c-556b-47d9-9548-06a708be77b3",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Mocha",
+      "description": "Chocolate-infused espresso drink with creamy milk.",
+      "price": "Rs. 760",
+      "price_num": 760,
+      "image_key": "mocha",
+      "display_order": 14
+    },
+    {
+      "id": "fb5375ba-9e82-4e21-b616-f32482e973ae",
+      "category_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Affogato",
+      "description": "Cold espresso poured over creamy vanilla ice cream.",
+      "price": "Rs. 1050",
+      "price_num": 1050,
+      "image_key": "affogato",
+      "display_order": 15
+    },
+    {
+      "id": "cb8a940d-8724-43e5-88a5-f89dcb283458",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Hot Chocolate",
+      "description": "Rich, velvety chocolate drink, perfect for warmth.",
+      "price": "Rs. 800",
+      "price_num": 800,
+      "image_key": "hot_chocolate",
+      "display_order": 15
+    },
+    {
+      "id": "c90d348e-0bd2-46df-b476-f4efa3304412",
+      "category_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Matcha",
+      "description": "Smooth green tea latte with earthy matcha flavor.",
+      "price": "Rs. 700",
+      "price_num": 700,
+      "image_key": "matcha",
+      "display_order": 16
+    }
+  ],
+  "best_sellers": [
+    {
+      "id": "4706fc29-f5bd-4288-a753-29686b439371",
+      "name": "Latte",
+      "price": "Rs. 720",
+      "image_key": "latte",
+      "rating": 4.7,
+      "display_order": 1
+    },
+    {
+      "id": "905c92f7-808b-4587-b7e2-d01efdf6066f",
+      "name": "Cappuccino",
+      "price": "Rs. 860",
+      "image_key": "cappuccino",
+      "rating": 4.8,
+      "display_order": 2
+    },
+    {
+      "id": "d04fbe23-3cee-42af-a1ac-038bc8de1a92",
+      "name": "Mocha",
+      "price": "Rs. 760",
+      "image_key": "mocha",
+      "rating": 4.6,
+      "display_order": 3
+    },
+    {
+      "id": "03e1119b-bcbb-4270-987d-adc38f9fdcdf",
+      "name": "Peach ice",
+      "price": "Rs. 580",
+      "image_key": "peach_ice",
+      "rating": 4.9,
+      "display_order": 4
+    },
+    {
+      "id": "168518b8-e213-4b12-a57b-9d30edce70d1",
+      "name": "Cookies & Cream Frappe",
+      "price": "Rs. 950",
+      "image_key": "cookies_cream",
+      "rating": 4.8,
+      "display_order": 5
+    },
+    {
+      "id": "8c43aced-7c8f-4bd6-979e-36e2b4fd459f",
+      "name": "Brownie",
+      "price": "Rs. 500",
+      "image_key": "brownie",
+      "rating": 4.7,
+      "display_order": 6
+    }
+  ],
+  "gallery": [
+    {
+      "id": "772a3e27-c12c-4f6f-ac14-93df39511d69",
+      "title": "Gallery 1",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery1.jpeg",
+      "display_order": 1
+    },
+    {
+      "id": "e9be7c67-aa07-4b30-a6ce-1ea99db3a062",
+      "title": "Gallery 2",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery2.jpeg",
+      "display_order": 2
+    },
+    {
+      "id": "7dd6da26-b86b-42c2-ba9b-1b9ca04970bd",
+      "title": "Gallery 3",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery3.jpeg",
+      "display_order": 3
+    },
+    {
+      "id": "293f6a7f-5fa6-4cd0-9b34-aa3ef1d89bbf",
+      "title": "Gallery 4",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery4.jpeg",
+      "display_order": 4
+    },
+    {
+      "id": "b4c61a76-c2e2-4aeb-8606-1fc7b2651baa",
+      "title": "Gallery 5",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery5.jpeg",
+      "display_order": 5
+    },
+    {
+      "id": "ff760c14-f93a-4640-b8e7-6cf3f6149c4b",
+      "title": "Gallery 6",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery%206.jpg",
+      "display_order": 6
+    },
+    {
+      "id": "c0d6e982-830e-4a62-b992-5282f55f1678",
+      "title": "Gallery 7",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery%207.jpg",
+      "display_order": 7
+    },
+    {
+      "id": "438e640c-23e3-451a-9ebc-90c298e78530",
+      "title": "Gallery 8",
+      "image_url": "https://fvtnzndwstxrvaacgrwb.supabase.co/storage/v1/object/public/Gallery/gallery%208%20(2).jpg",
+      "display_order": 8
+    }
+  ],
+  "coffee_guide": [
+    {
+      "id": "785041fe-8a26-445f-a768-3ed1e7068dde",
+      "name": "Espresso",
+      "description": "A concentrated shot of coffee with a bold flavor and rich crema.",
+      "ratio": "1:2",
+      "milk": "No Milk",
+      "strength": "Strong",
+      "image_key": "espresso",
+      "layers": [
+        {
+          "pct": 100,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        }
+      ],
+      "display_order": 1
+    },
+    {
+      "id": "ab67751c-f94b-4eb9-b3b4-20158d496dcd",
+      "name": "Latte",
+      "description": "A smooth and creamy coffee with a higher ratio of milk.",
+      "ratio": "1:3",
+      "milk": "High",
+      "strength": "Mild",
+      "image_key": "latte",
+      "layers": [
+        {
+          "pct": 20,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 70,
+          "color": "bg-amber-200",
+          "label": "Steamed Milk"
+        },
+        {
+          "pct": 10,
+          "color": "bg-amber-100",
+          "label": "Foam"
+        }
+      ],
+      "display_order": 2
+    },
+    {
+      "id": "ee243647-3437-4286-b2e4-acd63b8676c7",
+      "name": "Cappuccino",
+      "description": "A balanced coffee with equal parts espresso, milk, and foam.",
+      "ratio": "1:1:1",
+      "milk": "Medium",
+      "strength": "Medium",
+      "image_key": "cappuccino",
+      "layers": [
+        {
+          "pct": 33,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 33,
+          "color": "bg-amber-200",
+          "label": "Milk"
+        },
+        {
+          "pct": 34,
+          "color": "bg-amber-100",
+          "label": "Foam"
+        }
+      ],
+      "display_order": 3
+    },
+    {
+      "id": "37844465-ca0a-4c96-ba59-4d9ee478e12f",
+      "name": "Mocha",
+      "description": "A chocolate-flavored coffee combining espresso, milk, and cocoa.",
+      "ratio": "1:2",
+      "milk": "Medium",
+      "strength": "Medium",
+      "image_key": "mocha",
+      "layers": [
+        {
+          "pct": 25,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 25,
+          "color": "bg-brown-700",
+          "label": "Chocolate"
+        },
+        {
+          "pct": 40,
+          "color": "bg-amber-200",
+          "label": "Milk"
+        },
+        {
+          "pct": 10,
+          "color": "bg-amber-100",
+          "label": "Foam"
+        }
+      ],
+      "display_order": 4
+    },
+    {
+      "id": "2465308e-6130-4bce-aaae-802fd9102668",
+      "name": "Americano",
+      "description": "Hot water added to espresso for a lighter coffee.",
+      "ratio": "1:3",
+      "milk": "No Milk",
+      "strength": "Mild",
+      "image_key": "americano",
+      "layers": [
+        {
+          "pct": 30,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 70,
+          "color": "bg-blue-200",
+          "label": "Water"
+        }
+      ],
+      "display_order": 5
+    },
+    {
+      "id": "3cf497e6-bbeb-4ab2-bd1e-8bdb69c5678e",
+      "name": "Affogato",
+      "description": "A delicious dessert coffee where hot espresso is poured over vanilla ice cream.",
+      "ratio": "1:1",
+      "milk": "Ice Cream",
+      "strength": "Mild",
+      "image_key": "affogato",
+      "layers": [
+        {
+          "pct": 70,
+          "color": "bg-yellow-100",
+          "label": "Ice Cream"
+        },
+        {
+          "pct": 30,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        }
+      ],
+      "display_order": 6
+    },
+    {
+      "id": "c6822017-2718-4a9d-9773-68b4325822c0",
+      "name": "Flat White",
+      "description": "A velvety coffee with espresso and finely textured microfoam milk.",
+      "ratio": "1:2",
+      "milk": "Medium",
+      "strength": "Strong",
+      "image_key": "flat_white",
+      "layers": [
+        {
+          "pct": 40,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 60,
+          "color": "bg-amber-200",
+          "label": "Milk"
+        }
+      ],
+      "display_order": 7
+    },
+    {
+      "id": "445aabae-734b-49bd-b321-0f5f812ded62",
+      "name": "Spanish Latte",
+      "description": "A sweet and creamy latte made with condensed milk.",
+      "ratio": "1:3",
+      "milk": "High",
+      "strength": "Mild",
+      "image_key": "spanish_latte",
+      "layers": [
+        {
+          "pct": 25,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 25,
+          "color": "bg-yellow-200",
+          "label": "Condensed Milk"
+        },
+        {
+          "pct": 50,
+          "color": "bg-amber-200",
+          "label": "Milk"
+        }
+      ],
+      "display_order": 8
+    },
+    {
+      "id": "d9193b37-5636-4653-b82d-c9b848f023f4",
+      "name": "Cortado",
+      "description": "Equal parts espresso and warm milk to reduce acidity.",
+      "ratio": "1:1",
+      "milk": "Low",
+      "strength": "Strong",
+      "image_key": "cortado",
+      "layers": [
+        {
+          "pct": 50,
+          "color": "bg-amber-900",
+          "label": "Espresso"
+        },
+        {
+          "pct": 50,
+          "color": "bg-amber-200",
+          "label": "Milk"
+        }
+      ],
+      "display_order": 9
+    }
+  ],
+  "feedback": [
+    {
+      "id": 6,
+      "name": "Sabrina Farooq",
+      "rating": 4,
+      "message": "amazing",
+      "created_at": "2026-03-30T22:22:45.755056+00:00"
+    },
+    {
+      "id": 5,
+      "name": "Alina Khan",
+      "rating": 4,
+      "message": "nice",
+      "created_at": "2026-03-28T18:07:26.019775+00:00"
+    },
+    {
+      "id": 4,
+      "name": "Zara Ali",
+      "rating": 4,
+      "message": "welcoming",
+      "created_at": "2026-03-28T06:57:20.837443+00:00"
+    },
+    {
+      "id": 3,
+      "name": "Alia Khan",
+      "rating": 4,
+      "message": "amazing",
+      "created_at": "2026-03-28T06:34:18.455676+00:00"
+    },
+    {
+      "id": 2,
+      "name": "Alia Ali",
+      "rating": 4,
+      "message": "good",
+      "created_at": "2026-03-27T20:25:00.818268+00:00"
+    },
+    {
+      "id": 1,
+      "name": "Test User",
+      "rating": 5,
+      "message": "This is a test feedback",
+      "created_at": "2026-03-26T21:49:50.442843+00:00"
+    }
+  ]
+}

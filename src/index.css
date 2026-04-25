@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 30% 95%;
+    --foreground: 0 0% 18%;
+
+    --card: 33 35% 97%;
+    --card-foreground: 0 0% 18%;
+
+    --popover: 33 35% 97%;
+    --popover-foreground: 0 0% 18%;
+
+    --primary: 18 47% 28%;
+    --primary-foreground: 35 45% 96%;
+
+    --secondary: 30 25% 90%;
+    --secondary-foreground: 0 0% 18%;
+
+    --muted: 33 20% 92%;
+    --muted-foreground: 25 10% 45%;
+
+    --accent: 25 35% 44%;
+    --accent-foreground: 35 45% 96%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
+    --ring: 18 47% 28%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 32 25% 93%;
+    --sidebar-foreground: 0 0% 18%;
+    --sidebar-primary: 18 47% 28%;
+    --sidebar-primary-foreground: 35 45% 96%;
+    --sidebar-accent: 30 25% 90%;
+    --sidebar-accent-foreground: 0 0% 18%;
+    --sidebar-border: 30 18% 85%;
+    --sidebar-ring: 18 47% 28%;
+
+    /* Coffee-specific tokens */
+    --coffee: 18 50% 28%;
+    --coffee-foreground: 35 45% 96%;
+    --espresso: 16 55% 14%;
+    --espresso-foreground: 35 45% 96%;
+    --mocha: 22 35% 44%;
+    --mocha-foreground: 35 45% 96%;
+    --cream: 35 50% 95%;
+    --cream-foreground: 0 0% 18%;
+    --latte: 25 35% 65%;
+    --latte-foreground: 0 0% 18%;
+    --warm-beige: 33 30% 92%;
+    --warm-beige-foreground: 0 0% 18%;
+    --caramel: 25 40% 55%;
+    --caramel-foreground: 35 45% 96%;
+
+    /* Shadows */
+    --shadow-soft: 0 2px 16px -2px hsl(25 30% 30% / 0.06);
+    --shadow-warm: 0 8px 30px -6px hsl(25 40% 25% / 0.1);
+    --shadow-elevated: 0 20px 60px -15px hsl(25 40% 20% / 0.14);
+
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+  }
+
+  .dark {
+    --background: 25 30% 8%;
+    --foreground: 35 30% 90%;
+    --card: 25 28% 12%;
+    --card-foreground: 35 30% 90%;
+    --popover: 25 28% 12%;
+    --popover-foreground: 35 30% 90%;
+    --primary: 30 35% 70%;
+    --primary-foreground: 25 35% 10%;
+    --secondary: 25 20% 18%;
+    --secondary-foreground: 35 30% 90%;
+    --muted: 25 18% 16%;
+    --muted-foreground: 30 15% 55%;
+    --accent: 22 35% 50%;
+    --accent-foreground: 35 40% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 25 18% 20%;
+    --input: 25 18% 20%;
+    --ring: 30 35% 70%;
+    --sidebar-background: 25 30% 10%;
+    --sidebar-foreground: 35 30% 90%;
+    --sidebar-primary: 30 35% 70%;
+    --sidebar-primary-foreground: 25 35% 10%;
+    --sidebar-accent: 25 18% 16%;
+    --sidebar-accent-foreground: 35 30% 90%;
+    --sidebar-border: 25 18% 20%;
+    --sidebar-ring: 30 35% 70%;
+    --coffee: 25 40% 50%;
+    --espresso: 20 35% 35%;
+    --mocha: 22 35% 50%;
+    --cream: 35 20% 20%;
+    --cream-foreground: 35 30% 90%;
+    --latte: 30 20% 30%;
+    --warm-beige: 33 18% 18%;
+    --caramel: 25 35% 50%;
+    --shadow-soft: 0 2px 16px -2px hsl(0 0% 0% / 0.3);
+    --shadow-warm: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply px-5 sm:px-8 lg:px-10 py-20 sm:py-24 lg:py-28;
+  }
+
+  .container-narrow {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .warm-card {
+    @apply bg-card rounded-2xl border border-border/60;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                border-color 0.3s ease;
+  }
+
+  .warm-card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    border-color: hsl(var(--border));
+  }
+
+  .text-gradient-coffee {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--coffee)), hsl(var(--mocha)));
+  }
+
+  .bg-gradient-warm {
+    background: linear-gradient(180deg, hsl(var(--cream)), hsl(var(--warm-beige)));
+  }
+
+  .bg-gradient-coffee {
+    background: linear-gradient(135deg, hsl(var(--coffee)), hsl(var(--espresso)));
+  }
+
+  /* Scroll-triggered reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Staggered children */
+  .reveal-children > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal-children.visible > *:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: translateY(0); }
+  .reveal-children.visible > *:nth-child(2) { transition-delay: 80ms; opacity: 1; transform: translateY(0); }
+  .reveal-children.visible > *:nth-child(3) { transition-delay: 160ms; opacity: 1; transform: translateY(0); }
+  .reveal-children.visible > *:nth-child(4) { transition-delay: 240ms; opacity: 1; transform: translateY(0); }
+  .reveal-children.visible > *:nth-child(5) { transition-delay: 320ms; opacity: 1; transform: translateY(0); }
+  .reveal-children.visible > *:nth-child(6) { transition-delay: 400ms; opacity: 1; transform: translateY(0); }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-steam {
+    animation: steam 3s ease-in-out infinite;
+  }
+
+  @keyframes steam {
+    0%, 100% { opacity: 0.4; transform: translateY(0) scaleX(1); }
+    50% { opacity: 0.8; transform: translateY(-8px) scaleX(1.1); }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+html {
+  scroll-behavior: smooth;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}

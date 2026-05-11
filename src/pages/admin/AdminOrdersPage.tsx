@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   Eye, CheckCircle, XCircle, X, MapPin, Package, 
   Phone, CheckCircle2, Bell, Clock, Calendar,
-  Image as ImageIcon, ExternalLink
+  Image as ImageIcon, ExternalLink, CreditCard, Wallet, Smartphone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +18,21 @@ const AdminOrdersPage = () => {
   const [loading, setLoading] = useState(false);
   const { fetchOrders, updateOrderStatus } = useOrders();
   const { addNotification } = useNotification();
+
+  const getPaymentDetails = (method: string) => {
+    switch (method?.toLowerCase()) {
+      case 'cash_on_delivery':
+        return { label: 'COD', icon: Wallet, color: 'text-blue-600 bg-blue-50' };
+      case 'bank_transfer':
+        return { label: 'Bank', icon: CreditCard, color: 'text-stone-600 bg-stone-100' };
+      case 'jazzcash':
+        return { label: 'JazzCash', icon: Smartphone, color: 'text-red-600 bg-red-50' };
+      case 'easypaisa':
+        return { label: 'EasyPaisa', icon: Smartphone, color: 'text-emerald-600 bg-emerald-50' };
+      default:
+        return { label: method || 'Unknown', icon: CreditCard, color: 'text-stone-400 bg-stone-50' };
+    }
+  };
 
   const formatOrderTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString([], { 
@@ -40,11 +55,9 @@ const AdminOrdersPage = () => {
     return diff < 30 * 60 * 1000; 
   };
 
-  // FIXED: Handles both Full URLs and relative paths
   const getScreenshotUrl = (path: string | null | undefined) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
-    
     const { data } = supabase.storage.from('payment_receipts').getPublicUrl(path);
     return data.publicUrl;
   };
@@ -75,7 +88,6 @@ const AdminOrdersPage = () => {
     if (updated) {
       if (selectedOrder?.id === id) setSelectedOrder(updated);
       setOrders(prev => prev.map(o => o.id === id ? updated : o));
-      
       addNotification({
         orderId: id,
         message: `Order ${newStatus.toLowerCase()}`,
@@ -89,7 +101,7 @@ const AdminOrdersPage = () => {
     <AdminLayout title="Orders" description="Manage and track customer orders in real-time">
       <div className="bg-white rounded-[2rem] shadow-sm border border-stone-100 overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-stone-500">Loading orders...</div>
+          <div className="p-8 text-center text-stone-500 font-bold uppercase text-[10px] tracking-widest">Loading orders...</div>
         ) : orders.length === 0 ? (
           <div className="p-8 text-center">
             <Bell size={32} className="mx-auto text-stone-300 mb-4" />
@@ -97,65 +109,79 @@ const AdminOrdersPage = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-full text-left border-collapse">
               <thead className="bg-stone-50 border-b border-stone-100">
                 <tr className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-                  <th className="px-8 py-5">Order ID & Time</th>
-                  <th className="px-8 py-5">Customer</th>
-                  <th className="px-8 py-5">Items</th>
-                  <th className="px-8 py-5">Status</th>
-                  <th className="px-8 py-5">Total</th>
-                  <th className="px-8 py-5">Actions</th>
+                  <th className="px-6 py-5 whitespace-nowrap">Order ID</th>
+                  <th className="px-4 py-5 whitespace-nowrap">Date & Time</th>
+                  <th className="px-4 py-5 whitespace-nowrap">Customer</th>
+                  <th className="px-4 py-5 whitespace-nowrap">Method</th>
+                  <th className="px-4 py-5 whitespace-nowrap">Status</th>
+                  <th className="px-4 py-5 whitespace-nowrap">Total</th>
+                  <th className="px-8 py-5 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
-                {orders.map((order) => (
-                  <tr key={order.id} className={cn(
-                    "hover:bg-stone-50/50 transition-colors",
-                    isRecentOrder(order.created_at) && order.status === 'Pending' && "bg-amber-50/30"
-                  )}>
-                    <td className="px-8 py-5">
-                      <div className="flex flex-col">
+                {orders.map((order) => {
+                  const pay = getPaymentDetails(order.payment_method);
+                  return (
+                    <tr key={order.id} className={cn(
+                      "hover:bg-stone-50/50 transition-colors",
+                      isRecentOrder(order.created_at) && order.status === 'Pending' && "bg-amber-50/30"
+                    )}>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-[#2D1B14]">#{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className="text-[11px] font-black text-[#2D1B14] tracking-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
                           {isRecentOrder(order.created_at) && order.status === 'Pending' && (
-                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                           )}
                         </div>
-                        <div className="flex items-center gap-1 text-[10px] text-stone-400 mt-1 font-bold">
-                          <Clock size={10} /> {formatOrderTime(order.created_at)}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-[#2D1B14]">
+                            <Calendar size={11} className="text-stone-400" /> {formatOrderDate(order.created_at)}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[9px] text-stone-400 font-bold">
+                            <Clock size={10} className="text-stone-300" /> {formatOrderTime(order.created_at)}
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      <div className="text-sm font-bold text-[#2D1B14]">{order.name}</div>
-                      <div className="text-[10px] text-stone-400">{order.phone}</div>
-                    </td>
-                    <td className="px-8 py-5 text-xs text-stone-600 font-medium">
-                      {Array.isArray(order.items) ? order.items.length : 0} items
-                    </td>
-                    <td className="px-8 py-5">
-                      <span className={cn(
-                        "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest",
-                        order.status === 'Pending' ? "bg-amber-100 text-amber-700" :
-                        order.status === 'Confirmed' ? "bg-emerald-100 text-emerald-700" : 
-                        order.status === 'Completed' ? "bg-purple-100 text-purple-700" :
-                        "bg-rose-100 text-rose-700"
-                      )}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 font-bold text-[#2D1B14]">Rs. {order.total.toLocaleString()}</td>
-                    <td className="px-8 py-5">
-                      <button 
-                        onClick={() => setSelectedOrder(order)}
-                        className="p-2 bg-stone-100 text-stone-500 hover:bg-[#2D1B14] hover:text-white rounded-xl transition-all"
-                      >
-                        <Eye size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="text-[13px] font-bold text-[#2D1B14]">{order.name}</div>
+                        <div className="text-[9px] text-stone-400 font-bold">{order.phone}</div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider", pay.color)}>
+                          <pay.icon size={10} />
+                          {pay.label}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span className={cn(
+                          "px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest inline-block",
+                          order.status === 'Pending' ? "bg-amber-100 text-amber-700" :
+                          order.status === 'Confirmed' ? "bg-emerald-100 text-emerald-700" : 
+                          order.status === 'Completed' ? "bg-purple-100 text-purple-700" :
+                          "bg-rose-100 text-rose-700"
+                        )}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span className="text-[13px] font-black text-[#2D1B14]">Rs. {order.total.toLocaleString()}</span>
+                      </td>
+                      <td className="px-8 py-4 text-right whitespace-nowrap">
+                        <button 
+                          onClick={() => setSelectedOrder(order)}
+                          className="p-1.5 bg-stone-100 text-stone-500 hover:bg-[#2D1B14] hover:text-white rounded-lg transition-all"
+                        >
+                          <Eye size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -174,12 +200,18 @@ const AdminOrdersPage = () => {
             
             <div className="mb-8">
               <h3 className="text-2xl font-serif font-bold">Order Details</h3>
-              <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#5D3A26] bg-[#F5F1EE] px-3 py-1 rounded-lg">
-                  <Clock size={14} /> {formatOrderTime(selectedOrder.created_at)}
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-[#5D3A26] bg-[#F5F1EE] px-3 py-1 rounded-lg uppercase tracking-widest">
+                  <Calendar size={12} /> {formatOrderDate(selectedOrder.created_at)}
                 </div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-stone-400">
-                  <Calendar size={14} /> {formatOrderDate(selectedOrder.created_at)}
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-[#5D3A26] bg-[#F5F1EE] px-3 py-1 rounded-lg uppercase tracking-widest">
+                  <Clock size={12} /> {formatOrderTime(selectedOrder.created_at)}
+                </div>
+                <div className={cn(
+                  "flex items-center gap-1.5 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest",
+                  getPaymentDetails(selectedOrder.payment_method).color
+                )}>
+                  {selectedOrder.payment_method?.replace('_', ' ')}
                 </div>
               </div>
             </div>
@@ -205,17 +237,26 @@ const AdminOrdersPage = () => {
                     </div>
                   ) : (
                     <div className="py-6 px-4 rounded-3xl border border-dashed border-stone-200 flex flex-col items-center justify-center bg-stone-50 text-stone-400">
-                      <p className="text-[10px] font-bold uppercase">No proof uploaded</p>
+                      <p className="text-[10px] font-bold uppercase">
+                        {selectedOrder.payment_method === 'cash_on_delivery' ? 'COD - No Proof Required' : 'No proof uploaded'}
+                      </p>
                     </div>
                   )}
                 </div>
 
                 <div className="h-px bg-stone-100 w-full" />
 
-                <div className="flex items-center gap-4 text-stone-600">
-                  <Phone size={18} className="text-[#5D3A26]" /> 
-                  <span className="text-sm font-bold">{selectedOrder.phone}</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 text-stone-600">
+                    <Phone size={16} className="text-[#5D3A26]" /> 
+                    <span className="text-xs font-bold">{selectedOrder.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-stone-600">
+                    <Wallet size={16} className="text-[#5D3A26]" /> 
+                    <span className="text-xs font-bold uppercase tracking-tight">{selectedOrder.payment_method?.replace('_', ' ')}</span>
+                  </div>
                 </div>
+
                 {selectedOrder.address && (
                   <div className="flex items-start gap-4 text-stone-600">
                     <MapPin size={18} className="text-[#5D3A26] mt-1" /> 
@@ -240,9 +281,15 @@ const AdminOrdersPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100">
-                  <p className="text-[10px] font-black uppercase text-stone-400 mb-2">Order Total</p>
-                  <p className="text-xl font-bold text-[#2D1B14]">Rs. {selectedOrder.total.toLocaleString()}</p>
+                <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 flex justify-between items-center">
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-stone-400">Order Total</p>
+                    <p className="text-xl font-bold text-[#2D1B14]">Rs. {selectedOrder.total.toLocaleString()}</p>
+                  </div>
+                  <div className="text-right">
+                     <p className="text-[9px] font-black uppercase text-stone-400">Method</p>
+                     <p className="text-xs font-bold uppercase">{selectedOrder.payment_method?.replace('_', ' ')}</p>
+                  </div>
                 </div>
             </div>
 

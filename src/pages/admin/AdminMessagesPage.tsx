@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Mail, Trash2, User, Calendar, Reply, MessageSquare, Loader2 } from "lucide-react";
+import { Mail, Trash2, User, Calendar, Reply, MessageSquare, Loader2, CheckCircle2 } from "lucide-react";
 
+// 1. Interface must include these fields for TypeScript to recognize them
 interface ContactMessage {
   id: string;
   name: string;
@@ -11,6 +12,8 @@ interface ContactMessage {
   subject: string;
   message: string;
   created_at: string;
+  is_read: boolean;    
+  is_replied: boolean; 
 }
 
 const AdminMessagesPage = () => {
@@ -27,7 +30,9 @@ const AdminMessagesPage = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setMessages(data || []);
+
+      // 2. Type cast the data so TypeScript doesn't throw errors on is_read/is_replied
+      setMessages((data as ContactMessage[]) || []);
     } catch (error: any) {
       console.error("Fetch Error:", error.message);
       toast.error("Failed to load messages");
@@ -39,6 +44,25 @@ const AdminMessagesPage = () => {
   useEffect(() => {
     fetchMessages();
   }, []);
+
+  // 3. Mark as Read Logic
+  const markAsRead = async (id: string, currentReadStatus: boolean) => {
+    if (currentReadStatus) return; // Skip if already read
+
+    try {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ is_read: true })
+        .eq("id", id);
+
+      if (error) throw error;
+      
+      // Update local state immediately
+      setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: true } : m));
+    } catch (error: any) {
+      console.error("Update Error:", error.message);
+    }
+  };
 
   const deleteMessage = async (id: string) => {
     if (!confirm("Are you sure you want to delete this message?")) return;
@@ -55,31 +79,35 @@ const AdminMessagesPage = () => {
       toast.success("Message deleted");
       setMessages(prev => prev.filter(msg => msg.id !== id));
     } catch (error: any) {
-      console.error("Delete Error:", error.message);
-      toast.error(`Delete failed: ${error.message}`);
+      toast.error("Delete failed");
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleReply = (email: string, subject: string) => {
-    if (!email) {
+  const handleReply = async (msg: ContactMessage) => {
+    if (!msg.email) {
       toast.error("User email not found");
       return;
     }
     
-    // 1. Encode details for the URL
-    const encodedSubject = encodeURIComponent(`Re: ${subject || 'Inquiry'}`);
-    const encodedBody = encodeURIComponent("\n\n--- Original Message Below ---\n\n");
+    // 4. Update status to Replied (and Read) in Database
+    try {
+      await supabase
+        .from("contact_messages")
+        .update({ is_replied: true, is_read: true })
+        .eq("id", msg.id);
+      
+      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, is_replied: true, is_read: true } : m));
+    } catch (err) {
+      console.error("Failed to update reply status");
+    }
+
+    const encodedSubject = encodeURIComponent(`Re: ${msg.subject || 'Inquiry'}`);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${msg.email}&su=${encodedSubject}`;
     
-    // 2. Direct Gmail Compose URL
-    // This bypasses the computer's default app and opens Gmail in a new tab
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodedSubject}&body=${encodedBody}`;
-    
-    // 3. Open in new tab
     window.open(gmailUrl, '_blank', 'noopener,noreferrer');
-    
-    toast.success(`Opening Gmail for ${email}`);
+    toast.success(`Opening Gmail for ${msg.email}`);
   };
 
   return (
@@ -95,17 +123,39 @@ const AdminMessagesPage = () => {
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
-                className="bg-white rounded-[2rem] border border-stone-100 shadow-sm p-8 hover:shadow-md transition-all group"
+                onClick={() => markAsRead(msg.id, msg.is_read)}
+                className={`bg-white rounded-[2rem] border transition-all p-8 group relative cursor-pointer ${
+                  !msg.is_read 
+                    ? 'border-accent/40 shadow-md ring-1 ring-accent/5' 
+                    : 'border-stone-100 shadow-sm'
+                }`}
               >
+                {/* Status Badges */}
+                <div className="absolute top-8 right-8 flex gap-2">
+                  {!msg.is_read && (
+                    <span className="bg-accent text-white text-[9px] font-black uppercase px-2 py-1 rounded-full animate-pulse">
+                      New
+                    </span>
+                  )}
+                  {msg.is_replied && (
+                    <span className="bg-green-100 text-green-700 text-[9px] font-black uppercase px-2 py-1 rounded-full flex items-center gap-1">
+                      <CheckCircle2 size={10} /> Replied
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex flex-col md:flex-row justify-between gap-6">
-                  
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center text-[#5D3A26]">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                        !msg.is_read ? 'bg-accent text-white' : 'bg-stone-50 text-stone-400'
+                      }`}>
                         <User size={20} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-[#2D1B14]">{msg.name}</h4>
+                        <h4 className={`font-bold transition-colors ${!msg.is_read ? 'text-black' : 'text-stone-600'}`}>
+                          {msg.name}
+                        </h4>
                         <div className="flex items-center gap-1.5 text-stone-400 text-xs mt-0.5">
                           <Mail size={12} />
                           {msg.email}
@@ -117,32 +167,43 @@ const AdminMessagesPage = () => {
                       <span className="text-[10px] font-black uppercase tracking-[0.1em] text-[#5D3A26] bg-[#F5F1EE] px-3 py-1.5 rounded-lg">
                         Subject: {msg.subject || "No Subject"}
                       </span>
-                      <div className="mt-4 text-stone-600 text-sm leading-relaxed bg-stone-50/50 p-5 rounded-2xl border border-stone-100 italic">
+                      <div className={`mt-4 text-sm leading-relaxed p-5 rounded-2xl border italic transition-colors ${
+                        !msg.is_read 
+                          ? 'bg-white border-accent/10 text-stone-800' 
+                          : 'bg-stone-50/50 border-stone-100 text-stone-500'
+                      }`}>
                         "{msg.message}"
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4 text-[10px] text-stone-300 font-bold uppercase tracking-widest">
                       <Calendar size={12} /> 
-                      {new Date(msg.created_at).toLocaleDateString(undefined, { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })} at {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(msg.created_at).toLocaleDateString()} at {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
 
-                  <div className="flex md:flex-col gap-3 shrink-0">
+                  <div className="flex md:flex-col gap-3 shrink-0 justify-end">
                     <button 
-                      onClick={() => handleReply(msg.email, msg.subject)}
-                      className="flex items-center justify-center gap-2 bg-[#2D1B14] text-[#EAD8C0] px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-[#5D3A26] transition-all shadow-sm"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents markAsRead from firing
+                        handleReply(msg);
+                      }}
+                      className={`flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all shadow-sm ${
+                        msg.is_replied 
+                          ? 'bg-stone-100 text-stone-400 hover:bg-stone-200' 
+                          : 'bg-[#2D1B14] text-[#EAD8C0] hover:bg-[#5D3A26]'
+                      }`}
                     >
-                      <Reply size={16} /> Reply
+                      <Reply size={16} /> {msg.is_replied ? "Reply Again" : "Reply"}
                     </button>
+                    
                     <button 
-                      onClick={() => deleteMessage(msg.id)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents markAsRead from firing
+                        deleteMessage(msg.id);
+                      }}
                       disabled={actionLoading === msg.id}
-                      className="flex items-center justify-center gap-2 bg-white text-stone-400 px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 transition-all border border-stone-100 hover:border-rose-100 disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 bg-white text-stone-400 px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 transition-all border border-stone-100 hover:border-rose-100"
                     >
                       {actionLoading === msg.id ? (
                         <Loader2 className="animate-spin" size={16} />
@@ -160,7 +221,6 @@ const AdminMessagesPage = () => {
               <div className="text-center py-20 bg-stone-50/50 rounded-[3rem] border border-dashed border-stone-200">
                 <MessageSquare size={48} className="mx-auto mb-4 text-stone-200" />
                 <h3 className="text-stone-500 font-bold">Your inbox is empty</h3>
-                <p className="text-stone-400 text-xs uppercase tracking-widest mt-1">No new inquiries from customers</p>
               </div>
             )}
           </div>

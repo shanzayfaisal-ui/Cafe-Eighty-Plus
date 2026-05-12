@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Phone, Mail, MapPin, ChevronRight, ArrowLeft, Building2, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PAKISTAN_CITIES = [
   "Karachi", "Lahore", "Islamabad", "Faisalabad", "Rawalpindi", "Multan", 
@@ -11,6 +12,7 @@ const PAKISTAN_CITIES = [
 const CustomerInfo = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, profile } = useAuth();
   
   const [customer, setCustomer] = useState({
     name: "",
@@ -20,6 +22,35 @@ const CustomerInfo = () => {
     city: "",
     country: "Pakistan",
   });
+
+  useEffect(() => {
+    const storedCustomer = localStorage.getItem("customer");
+
+    if (storedCustomer) {
+      setCustomer(JSON.parse(storedCustomer));
+      return;
+    }
+
+    const savedName = profile?.full_name ?? user?.user_metadata?.full_name ?? "";
+    const savedEmail = user?.email ?? "";
+    const savedPhone = profile?.phone ?? "";
+    const savedAddress = profile?.address ?? "";
+
+    const addressParts = savedAddress.split(',').map((part) => part.trim()).filter(Boolean);
+    const city = addressParts.length > 1 ? addressParts[addressParts.length - 2] : "";
+    const streetAddress = addressParts.length > 2 ? addressParts.slice(0, -2).join(', ') : addressParts[0] ?? "";
+
+    if (user || profile) {
+      setCustomer({
+        name: savedName,
+        phone: savedPhone,
+        email: savedEmail,
+        streetAddress,
+        city,
+        country: addressParts.length > 0 ? addressParts[addressParts.length - 1] : "Pakistan",
+      });
+    }
+  }, [profile, user]);
 
   const handleChange = (field: string, value: string) => {
     // For phone, only allow numbers and limit to 11 characters

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.jpeg';
 
@@ -40,6 +41,7 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems, setIsCartOpen } = useCart();
+  const { user } = useAuth();
 
   const isHome = location.pathname === '/';
 
@@ -216,6 +218,13 @@ const Header = () => {
                   )}
                 </button>
 
+                <Link
+                  to={user ? '/profile' : '/login'}
+                  className={`hidden sm:inline-flex items-center rounded-full border border-stone-200 px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${textColor} hover:bg-stone-100`}
+                >
+                  {user ? 'Profile' : 'Login'}
+                </Link>
+
                 <button onClick={() => setMobileOpen(!mobileOpen)} className={`xl:hidden p-2.5 rounded-full ${textColor} hover:bg-stone-500/10 transition-colors`}>
                   {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
@@ -240,6 +249,13 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                to={user ? '/profile' : '/login'}
+                onClick={() => setMobileOpen(false)}
+                className="mt-2 py-4 px-6 rounded-xl font-bold uppercase text-xs tracking-widest text-stone-500 hover:bg-stone-50"
+              >
+                {user ? 'Profile' : 'Login'}
+              </Link>
             </nav>
           </div>
         )}

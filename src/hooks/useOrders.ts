@@ -20,7 +20,8 @@ export const useOrders = () => {
     paymentMethod?: string,
     paymentReceiptUrl?: string,
     customerId?: string,
-    email?: string
+    email?: string,
+    userId?: string
   ): Promise<Order | null> => {
     setLoading(true);
     setError(null);
@@ -53,9 +54,11 @@ export const useOrders = () => {
       if (paymentMethod) orderData.payment_method = paymentMethod;
       if (paymentReceiptUrl) orderData.payment_receipt_url = paymentReceiptUrl;
       if (customerId) orderData.customer_id = customerId;
+      if (userId) orderData.user_id = userId;
       if (email) orderData.email = email.trim();
+      orderData.created_at = new Date().toISOString();
 
-      console.log('Creating order with data:', orderData);
+      console.log('Order being inserted:', orderData);
       
       const { data, error: insertError } = await supabase
         .from('orders')
@@ -64,40 +67,39 @@ export const useOrders = () => {
         .single();
 
       if (insertError) {
-        console.error('Supabase insert error:', {
-          code: insertError.code,
-          message: insertError.message,
-          details: insertError.details,
-          hint: insertError.hint,
+        console.error('Order insert failed:', insertError);
+        toast({
+          title: 'Order failed',
+          description: insertError.message || 'Unable to place order.',
+          variant: 'destructive',
         });
-        
-        // Provide user-friendly error messages
+
         if (insertError.code === 'PGRST301') {
           throw new Error('Permission denied. Please try again.');
         }
         if (insertError.message.includes('customer_id') || insertError.message.includes('items_summary')) {
-          // If customer_id or items_summary columns don't exist, retry without them
           console.warn('Schema column not found, retrying with minimal fields');
-          const retryData = { 
+          const retryData: any = {
             name: orderData.name,
             phone: orderData.phone,
             items: orderData.items,
             total: orderData.total,
             status: orderData.status,
+            created_at: orderData.created_at,
           };
-          // Add optional fields that likely exist
           if (orderData.address) retryData.address = orderData.address;
           if (orderData.payment_method) retryData.payment_method = orderData.payment_method;
           if (orderData.payment_receipt_url) retryData.payment_receipt_url = orderData.payment_receipt_url;
-          
+
           const { data: retryData2, error: retryError } = await supabase
             .from('orders')
             .insert([retryData])
             .select()
             .single();
-          
+
           if (retryError) throw retryError;
           if (!retryData2) throw new Error('No data returned from server');
+          console.log('Inserted order response:', retryData2);
           return retryData2 as Order;
         }
         throw new Error(insertError.message || 'Failed to insert order');
@@ -107,7 +109,7 @@ export const useOrders = () => {
         throw new Error('No data returned from server');
       }
 
-      console.log('Order created successfully:', data);
+      console.log('Inserted order response:', data);
 
       // Decrease stock for each item in the order
       if (Array.isArray(items) && items.length > 0) {
@@ -150,6 +152,11 @@ export const useOrders = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create order';
       console.error('Create order error:', message, err);
+      toast({
+        title: 'Order failed',
+        description: message,
+        variant: 'destructive',
+      });
       setError(message);
       return null;
     } finally {
@@ -277,6 +284,29 @@ export const useOrders = () => {
     }
   }, []);
 
+  const fetchUserOrders = useCallback(async (userId: string): Promise<Order[]> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      return (data as Order[]) || [];
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch user orders';
+      setError(message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     loading,
     error,
@@ -285,5 +315,6 @@ export const useOrders = () => {
     fetchOrderById,
     updateOrderStatus,
     fetchCustomerOrders,
+    fetchUserOrders,
   };
 };

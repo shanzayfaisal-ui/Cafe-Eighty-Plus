@@ -24,6 +24,7 @@ export interface Order {
   payment_receipt_url?: string | null; 
   payment_screenshot?: string | null; 
   customer_id?: string | null;
+  user_id?: string | null;
   created_at: string;
   updated_at?: string | null;
 }

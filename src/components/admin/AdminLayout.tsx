@@ -14,7 +14,6 @@ import {
   MessageSquare,
   BookOpen // Added for the Coffee Guide icon
 } from 'lucide-react';
-import { getCurrentUser, signOutAdmin } from '@/lib/adminAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -29,7 +28,7 @@ const AdminLayout = ({ title, description, children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [adminEmail, setAdminEmail] = useState('');
+  const [adminEmail, setAdminEmail] = useState('Admin');
   const [loggingOut, setLoggingOut] = useState(false);
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
 
@@ -59,14 +58,6 @@ const AdminLayout = ({ title, description, children }: AdminLayoutProps) => {
     };
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
-    void getCurrentUser().then((user) => {
-      if (isMounted) setAdminEmail(user?.email ?? 'Admin');
-    });
-    return () => { isMounted = false; };
-  }, []);
-
   const navItems = useMemo(() => [
     { label: 'Dashboard', to: '/admin', icon: LayoutDashboard },
     { label: 'Orders', to: '/admin/orders', icon: Coffee, badge: pendingOrdersCount }, 
@@ -84,7 +75,7 @@ const AdminLayout = ({ title, description, children }: AdminLayoutProps) => {
   const handleLogout = async () => {
     try {
       setLoggingOut(true);
-      await signOutAdmin();
+      localStorage.removeItem('isAdmin');
       navigate('/admin/login');
     } catch (error) {
       toast({ title: 'Logout failed', variant: 'destructive' });

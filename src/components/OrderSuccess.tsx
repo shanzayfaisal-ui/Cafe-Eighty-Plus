@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Home, AlertCircle, MapPin, ArrowLeft, XCircle, Loader2 } from "lucide-react";
 import { useCart, CartItem } from "@/contexts/CartContext"; // Removed DELIVERY_FEE from named imports
 import { useOrders } from "@/hooks/useOrders";
@@ -13,6 +13,7 @@ const DELIVERY_FEE = 150;
 
 const OrderSuccess = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { clearCart } = useCart();
   const { fetchOrderById, updateOrderStatus } = useOrders();
   const { toast } = useToast();
@@ -21,51 +22,90 @@ const OrderSuccess = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [hasShownCancelNotification, setHasShownCancelNotification] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // States for UI flow
   const [showTracker, setShowTracker] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    const storedCustomer = localStorage.getItem("customer");
-    const orderId = localStorage.getItem("lastOrderId");
-    const custId = localStorage.getItem("customerId");
+    let isMounted = true;
 
-    if (storedCart && storedCustomer) {
-      setOrderDetails({ cart: JSON.parse(storedCart), customer: JSON.parse(storedCustomer) });
-      setCustomerId(custId);
-      
-      if (orderId) {
-        fetchOrderById(orderId).then(fetchedOrder => {
-          if (fetchedOrder) {
-            setOrder(fetchedOrder);
+    const initializeOrder = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMessage(null);
+
+        const searchParams = new URLSearchParams(location.search);
+        const orderId = searchParams.get('order_id');
+
+        console.log('[OrderSuccess] Query params:', { order_id: orderId });
+
+        if (!orderId) {
+          console.warn('[OrderSuccess] Missing order_id in URL');
+          if (isMounted) {
+            setErrorMessage('No order information found. Please try again.');
+            setIsLoading(false);
           }
-        });
-      }
-
-      clearCart();
-      localStorage.removeItem("cart");
-    } else if (orderId && custId) {
-      setCustomerId(custId);
-      fetchOrderById(orderId).then(fetchedOrder => {
-        if (fetchedOrder) {
-          setOrder(fetchedOrder);
-          setOrderDetails({ 
-            cart: [], 
-            customer: { 
-              name: fetchedOrder.name, 
-              phone: fetchedOrder.phone, 
-              email: fetchedOrder.email, 
-              address: fetchedOrder.address 
-            }
-          });
+          return;
         }
-      });
-    } else {
-      navigate("/");
-    }
-  }, [navigate, clearCart, fetchOrderById]);
+
+        if (!isMounted) return;
+
+        try {
+          const fetchedOrder = await fetchOrderById(orderId);
+          if (!isMounted) return;
+
+          if (!fetchedOrder) {
+            console.warn('[OrderSuccess] Order not found for ID:', orderId);
+            if (isMounted) {
+              setErrorMessage('Order not found. Please contact support.');
+              setIsLoading(false);
+            }
+            return;
+          }
+
+          console.log('[OrderSuccess] Order fetched successfully:', fetchedOrder.id);
+          setOrder(fetchedOrder);
+          setCustomerId(fetchedOrder.customer_id ?? null);
+          setOrderDetails({
+            cart: Array.isArray(fetchedOrder.items) ? fetchedOrder.items : [],
+            customer: {
+              name: fetchedOrder.name,
+              phone: fetchedOrder.phone,
+              email: fetchedOrder.email,
+              address: fetchedOrder.address,
+            },
+          });
+
+          clearCart();
+        } catch (err) {
+          console.error('[OrderSuccess] Error fetching order:', err);
+          if (isMounted) {
+            setErrorMessage('Failed to load order details. Please try again.');
+            setIsLoading(false);
+          }
+          return;
+        }
+
+        if (!isMounted) return;
+        setIsLoading(false);
+      } catch (err) {
+        console.error('[OrderSuccess] Unexpected error:', err);
+        if (isMounted) {
+          setErrorMessage('An unexpected error occurred. Please try again.');
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeOrder();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, clearCart, fetchOrderById, location.search]);
 
   useOrderUpdates(customerId || "", (event: OrderEvent) => {
     try {
@@ -118,12 +158,60 @@ const OrderSuccess = () => {
     }
   };
 
-  if (!orderDetails || !order) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#F5F2ED] py-8 px-4 sm:px-6 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 text-[#5D3A26] animate-spin mx-auto mb-4" />
           <p className="text-stone-600 font-medium">Loading your order details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <div className="min-h-screen bg-[#F5F2ED] py-8 px-4 sm:px-6 flex items-center justify-center">
+        <div className="max-w-md mx-auto w-full bg-white rounded-[3rem] shadow-xl p-10 text-center">
+          <div className="bg-rose-100 p-4 rounded-full w-fit mx-auto mb-8">
+            <AlertCircle className="h-10 w-10 text-rose-600" />
+          </div>
+          <h2 className="text-2xl font-serif font-bold text-stone-800 mb-2">
+            Order Not Found
+          </h2>
+          <p className="text-stone-600 text-sm mb-8">
+            {errorMessage}
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="w-full bg-[#5D3A26] text-white py-5 rounded-2xl font-bold uppercase text-xs hover:bg-[#4a2e1e] transition-colors flex items-center justify-center gap-2"
+          >
+            <Home className="h-4 w-4" /> Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orderDetails || !order) {
+    return (
+      <div className="min-h-screen bg-[#F5F2ED] py-8 px-4 sm:px-6 flex items-center justify-center">
+        <div className="max-w-md mx-auto w-full bg-white rounded-[3rem] shadow-xl p-10 text-center">
+          <div className="bg-rose-100 p-4 rounded-full w-fit mx-auto mb-8">
+            <AlertCircle className="h-10 w-10 text-rose-600" />
+          </div>
+          <h2 className="text-2xl font-serif font-bold text-stone-800 mb-2">
+            Order Not Found
+          </h2>
+          <p className="text-stone-600 text-sm mb-8">
+            Unable to load your order details. Please try placing an order again.
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="w-full bg-[#5D3A26] text-white py-5 rounded-2xl font-bold uppercase text-xs hover:bg-[#4a2e1e] transition-colors flex items-center justify-center gap-2"
+          >
+            <Home className="h-4 w-4" /> Back to Home
+          </button>
         </div>
       </div>
     );

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrders } from "@/hooks/useOrders";
+import { useAuth } from "@/contexts/AuthContext";
 import { CreditCard, Wallet, ChevronLeft, Loader2, Upload, CheckCircle2, AlertCircle, Smartphone } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ const Payment = () => {
   
   const { items, totalPrice, clearCart, deliveryFee, refreshDeliveryFee } = useCart();
   const { createOrder } = useOrders();
+  const { user } = useAuth();
   
   const [customer, setCustomer] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
@@ -98,6 +100,7 @@ const Payment = () => {
         image: item.image || undefined,
       }));
 
+      const orderCustomerId = `cust_${Date.now()}`;
       const order = await createOrder(
         customer.name,
         customer.phone,
@@ -106,16 +109,23 @@ const Payment = () => {
         customer.address,
         paymentMethod,
         receiptUrl || undefined,
-        `cust_${Date.now()}`,
-        customer.email || undefined
+        orderCustomerId,
+        customer.email || undefined,
+        user?.id
       );
 
-      if (order) {
-        clearCart();
-        navigate("/order-success");
+      if (!order || !order.id) {
+        console.error('[Payment] Order creation failed or returned no id');
+        return;
       }
+
+      console.log('[Payment] Order created successfully:', order.id);
+      clearCart();
+      const redirectUrl = `/order-success?order_id=${order.id}`;
+      console.log('[Payment] Redirecting to:', redirectUrl);
+      navigate(redirectUrl);
     } catch (err: any) {
-      toast({ title: "Order Failed", description: err.message, variant: "destructive" });
+      toast({ title: "Order Failed", description: err.message || 'Unable to place order.', variant: "destructive" });
     } finally {
       setLoading(false);
     }

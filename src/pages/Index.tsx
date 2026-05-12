@@ -81,9 +81,9 @@ const fetchBestSellers = async () => {
       }))
     );
 
-    setLoading(false);
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching best sellers:', err);
+  } finally {
     setLoading(false);
   }
 };

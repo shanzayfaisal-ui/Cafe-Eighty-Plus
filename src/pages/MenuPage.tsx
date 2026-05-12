@@ -40,21 +40,26 @@ const MenuPage = () => {
 
   useEffect(() => {
     const fetchMenu = async () => {
-      const [catRes, itemRes] = await Promise.all([
-        supabase.from('menu_categories').select('*').order('display_order', { ascending: true }),
-        supabase.from('menu_items').select('*').order('display_order', { ascending: true }),
-      ]);
+      try {
+        const [catRes, itemRes] = await Promise.all([
+          supabase.from('menu_categories').select('*').order('display_order', { ascending: true }),
+          supabase.from('menu_items').select('*').order('display_order', { ascending: true }),
+        ]);
 
-      if (catRes.data && itemRes.data) {
-        const cats: MenuCategory[] = catRes.data.map((c: any) => ({
-          ...c,
-          items: itemRes.data
-            .filter((i: any) => i.category_id === c.id)
-            .map((i: any) => i as MenuItem),
-        }));
-        setCategories(cats);
+        if (catRes.data && itemRes.data) {
+          const cats: MenuCategory[] = catRes.data.map((c: any) => ({
+            ...c,
+            items: itemRes.data
+              .filter((i: any) => i.category_id === c.id)
+              .map((i: any) => i as MenuItem),
+          }));
+          setCategories(cats);
+        }
+      } catch (error) {
+        console.error('Error fetching menu:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchMenu();
   }, []);

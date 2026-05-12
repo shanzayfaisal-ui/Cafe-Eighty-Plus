@@ -11,7 +11,9 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import OrderNotificationDisplay from "@/components/OrderNotificationDisplay";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
-import AnnouncementBanner from "@/components/AnnouncementBanner";
+import ProtectedUserRoute from '@/components/ProtectedUserRoute';
+import AnnouncementBanner from '@/components/AnnouncementBanner';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 // Public Pages
 import Index from "./pages/Index";
@@ -24,6 +26,9 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ProfilePage from "./pages/ProfilePage";
 
 // Checkout Flow
 import CustomerInfo from "./components/CustomerInfo"; 
@@ -84,6 +89,12 @@ const AppContent = () => {
           <Route path="/billing" element={<Billing />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/profile" element={<ProtectedUserRoute />}>
+            <Route index element={<ProfilePage />} />
+          </Route>
           
           {/* Admin Auth */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -114,18 +125,20 @@ const AppContent = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <CartProvider>
-        <NotificationProvider>
-          <Toaster />
-          <Sonner />
-          <OrderNotificationDisplay />
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
-        </NotificationProvider>
-      </CartProvider>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <CartProvider>
+          <NotificationProvider>
+            <Toaster />
+            <Sonner />
+            <OrderNotificationDisplay />
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </NotificationProvider>
+        </CartProvider>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

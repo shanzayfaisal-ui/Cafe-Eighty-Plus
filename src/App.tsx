@@ -12,7 +12,7 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import OrderNotificationDisplay from "@/components/OrderNotificationDisplay";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
-import ProtectedUserRoute from "@/components/ProtectedUserRoute"; // <-- FIXED: Added missing import
+import ProtectedUserRoute from "@/components/ProtectedUserRoute";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import { ThemeToggle } from "@/components/ThemeToggle"; 
 
@@ -62,7 +62,10 @@ const AppContent = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+    <div 
+      suppressHydrationWarning 
+      className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300"
+    >
       {!isAdminRoute && (
         <div className="sticky top-0 z-[100] w-full shadow-sm bg-background">
           <AnnouncementBanner />

@@ -104,8 +104,8 @@ const Index = () => {
   return (
     <main className="bg-background text-foreground transition-colors duration-300">
       {/* Hero Carousel */}
-      <section id="home" className="relative w-full overflow-hidden bg-background">
-        <div className="relative h-[85vh] min-h-[500px] max-h-[900px] w-full overflow-hidden">
+      <section id="home" className="relative w-full overflow-hidden bg-black">
+        <div className="relative h-[85vh] min-h-[500px] max-h-[900px] w-full overflow-hidden bg-black">
           {heroSlides.map((slide, index) => (
             <div
               key={index}
@@ -122,11 +122,11 @@ const Index = () => {
             </div>
           ))}
           
-          {/* Dynamic Gradients based on theme */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/60 to-transparent" />
+          {/* FIXED: Using Black gradients instead of 'background' to eliminate white fog */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent z-10" />
 
-          <div className="absolute inset-0 flex items-end pb-24 sm:pb-32">
+          <div className="absolute inset-0 flex items-end pb-24 sm:pb-32 z-20">
             <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10 w-full">
               {heroSlides.map((slide, index) => (
                 <div
@@ -136,10 +136,11 @@ const Index = () => {
                   }`}
                   style={{ display: index === currentSlide ? 'block' : 'none' }}
                 >
-                  <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold text-foreground leading-[1.05] tracking-tight whitespace-pre-line">
+                  {/* Text forced to white for maximum contrast against the new dark gradients */}
+                  <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold text-white leading-[1.05] tracking-tight whitespace-pre-line">
                     {slide.title}
                   </h1>
-                  <p className="text-foreground/70 text-base sm:text-lg mt-4 max-w-md font-light tracking-wide">
+                  <p className="text-white/80 text-base sm:text-lg mt-4 max-w-md font-light tracking-wide">
                     {slide.subtitle}
                   </p>
                   <Link
@@ -154,13 +155,13 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentSlide(i)}
                 className={`h-1 rounded-full transition-all duration-500 ${
-                  i === currentSlide ? 'w-8 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/50'
+                  i === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'
                 }`}
                 aria-label={`Go to slide ${i + 1}`}
               />
@@ -169,15 +170,15 @@ const Index = () => {
 
           <button
             onClick={prevSlide}
-            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-border/40 hover:bg-background/40 transition-all duration-300"
+            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all duration-300"
           >
-            <ChevronLeft size={20} className="text-foreground" />
+            <ChevronLeft size={20} className="text-white" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-border/40 hover:bg-background/40 transition-all duration-300"
+            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all duration-300"
           >
-            <ChevronRight size={20} className="text-foreground" />
+            <ChevronRight size={20} className="text-white" />
           </button>
         </div>
       </section>

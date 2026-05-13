@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight, User } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,7 +49,7 @@ const Header = () => {
   useEffect(() => {
     const fetchAnnouncement = async () => {
       const { data, error } = await supabase
-        .from('announcements' as any)
+        .from('announcements')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
@@ -66,7 +66,7 @@ const Header = () => {
   // 2. Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -101,13 +101,15 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Logic for dynamic header coloring
   const headerBg = scrolled
-    ? 'bg-[#FDFBF9] shadow-lg border-b border-stone-200' 
+    ? 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border/40' 
     : isHome
     ? 'bg-transparent'
-    : 'bg-[#FDFBF9]/95 backdrop-blur-md';
+    : 'bg-background/95 backdrop-blur-md';
 
-  const textColor = !scrolled && isHome ? 'text-white' : 'text-[#5D3A26]';
+  const textColor = !scrolled && isHome ? 'text-white' : 'text-foreground';
+  const iconHoverBg = !scrolled && isHome ? 'hover:bg-white/10' : 'hover:bg-accent/10';
 
   return (
     <>
@@ -115,10 +117,10 @@ const Header = () => {
         
         {/* ANNOUNCEMENT BAR */}
         {announcement && (
-          <div className="bg-[#5D3A26] text-white py-2 px-4 z-[10000] border-b border-white/10">
+          <div className="bg-primary text-primary-foreground py-2 px-4 z-[10000] border-b border-white/10">
             <div className="container mx-auto flex justify-center items-center gap-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <Megaphone size={12} className={announcement.type === 'urgent' ? "text-rose-400 animate-pulse" : "text-stone-300"} />
+                <Megaphone size={12} className={announcement.type === 'urgent' ? "text-destructive-foreground animate-pulse" : "opacity-80"} />
                 <span className="truncate max-w-[180px] sm:max-w-none">{announcement.title}</span>
               </div>
               <button 
@@ -137,12 +139,18 @@ const Header = () => {
 
         {/* MAIN NAVBAR */}
         <div className={`${headerBg} transition-all duration-300`}>
-          <div className="container mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="flex items-center justify-between h-16">
+          <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
+            <div className="flex items-center justify-between h-20 sm:h-24 transition-all duration-300">
               <div className="flex items-center gap-3">
                 <Link to="/" className="flex items-center gap-3 group">
-                  <img src={logoImg} className="w-10 h-10 rounded-full object-cover border border-stone-200 group-hover:scale-105 transition-transform" alt="Logo" />
-                  <span className={`text-xl lg:text-2xl font-serif font-bold tracking-tight ${textColor}`}>Eighty Plus</span>
+                  <img 
+                    src={logoImg} 
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-border/50 group-hover:scale-105 transition-transform" 
+                    alt="Logo" 
+                  />
+                  <span className={`text-xl lg:text-2xl font-serif font-bold tracking-tight ${textColor}`}>
+                    Eighty Plus
+                  </span>
                 </Link>
               </div>
 
@@ -154,13 +162,13 @@ const Header = () => {
                     <Link
                       key={link.to}
                       to={link.to}
-                      className={`px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-all relative group ${textColor} ${
+                      className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-all relative group ${textColor} ${
                         isActive ? 'opacity-100' : 'opacity-60 hover:opacity-100'
                       }`}
                     >
                       {link.label}
                       {isActive && (
-                        <span className="absolute bottom-1 left-3 right-3 h-0.5 bg-current rounded-full" />
+                        <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-current rounded-full" />
                       )}
                     </Link>
                   );
@@ -168,26 +176,28 @@ const Header = () => {
               </nav>
 
               {/* Actions */}
-              <div className="flex items-center gap-1 sm:gap-3">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <div className="relative" ref={searchRef}>
                   <button 
                     onClick={() => setShowSearch(!showSearch)} 
-                    className={`p-2.5 rounded-full ${textColor} hover:bg-stone-500/10 transition-colors`}
+                    className={`p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                    aria-label="Search"
                   >
-                    <Search size={20} />
+                    <Search size={20} strokeWidth={2} />
                   </button>
                   
                   {showSearch && (
-                    <div className="absolute right-0 top-full mt-4 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-stone-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                      <div className="p-3 bg-stone-50 border-b border-stone-100">
+                    <div className="absolute right-0 top-full mt-4 w-72 sm:w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
                         <input 
                           autoFocus
                           type="text" 
                           placeholder="Search our menu..."
-                          className="w-full bg-transparent border-none outline-none text-sm text-stone-800 placeholder:text-stone-400"
+                          className="w-full bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground"
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
                         />
+                        {query && <X size={14} className="cursor-pointer opacity-50" onClick={() => setQuery("")} />}
                       </div>
                       {results.length > 0 && (
                         <div className="max-h-60 overflow-y-auto">
@@ -195,10 +205,10 @@ const Header = () => {
                             <button
                               key={idx}
                               onClick={() => {
-                                navigate(`/menu?search=${item.name}`);
+                                navigate(`/menu?search=${encodeURIComponent(item.name)}`);
                                 setShowSearch(false);
                               }}
-                              className="w-full text-left px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 border-b border-stone-50 last:border-none transition-colors"
+                              className="w-full text-left px-4 py-3 text-sm text-muted-foreground hover:bg-muted hover:text-foreground border-b border-border/50 last:border-none transition-colors"
                             >
                               {item.name}
                             </button>
@@ -209,10 +219,14 @@ const Header = () => {
                   )}
                 </div>
 
-                <button onClick={() => setIsCartOpen(true)} className={`relative p-2.5 rounded-full ${textColor} hover:bg-stone-500/10 transition-colors`}>
-                  <ShoppingBag size={20} />
+                <button 
+                  onClick={() => setIsCartOpen(true)} 
+                  className={`relative p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                  aria-label="Shopping Cart"
+                >
+                  <ShoppingBag size={20} strokeWidth={2} />
                   {totalItems > 0 && (
-                    <span className="absolute top-1.5 right-1.5 bg-[#5D3A26] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border-2 border-white">
+                    <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-background">
                       {totalItems}
                     </span>
                   )}
@@ -220,12 +234,16 @@ const Header = () => {
 
                 <Link
                   to={user ? '/profile' : '/login'}
-                  className={`hidden sm:inline-flex items-center rounded-full border border-stone-200 px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${textColor} hover:bg-stone-100`}
+                  className={`hidden sm:flex p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                  aria-label={user ? 'Profile' : 'Login'}
                 >
-                  {user ? 'Profile' : 'Login'}
+                  <User size={20} strokeWidth={2} />
                 </Link>
 
-                <button onClick={() => setMobileOpen(!mobileOpen)} className={`xl:hidden p-2.5 rounded-full ${textColor} hover:bg-stone-500/10 transition-colors`}>
+                <button 
+                  onClick={() => setMobileOpen(!mobileOpen)} 
+                  className={`xl:hidden p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                >
                   {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
               </div>
@@ -235,26 +253,28 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="xl:hidden bg-white border-t border-stone-100 absolute top-full left-0 w-full shadow-2xl animate-in slide-in-from-top duration-300">
-            <nav className="flex flex-col p-4">
+          <div className="xl:hidden bg-background border-t border-border absolute top-full left-0 w-full shadow-2xl animate-in slide-in-from-top duration-300">
+            <nav className="flex flex-col p-4 max-h-[80vh] overflow-y-auto">
               {navLinks.map(link => (
                 <Link
                   key={link.to}
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
-                  className={`py-4 px-6 rounded-xl font-bold uppercase text-xs tracking-widest transition-colors ${
-                    location.pathname === link.to ? 'bg-stone-50 text-[#5D3A26]' : 'text-stone-500 hover:bg-stone-50'
+                  className={`py-4 px-6 rounded-xl font-bold uppercase text-[11px] tracking-widest transition-colors ${
+                    location.pathname === link.to ? 'bg-muted text-primary' : 'text-muted-foreground hover:bg-muted/50'
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
+              <div className="h-px bg-border my-2 mx-6" />
               <Link
                 to={user ? '/profile' : '/login'}
                 onClick={() => setMobileOpen(false)}
-                className="mt-2 py-4 px-6 rounded-xl font-bold uppercase text-xs tracking-widest text-stone-500 hover:bg-stone-50"
+                className="py-4 px-6 rounded-xl font-bold uppercase text-[11px] tracking-widest text-muted-foreground hover:bg-muted/50 flex items-center gap-2"
               >
-                {user ? 'Profile' : 'Login'}
+                <User size={16} />
+                {user ? 'Profile' : 'Login / Register'}
               </Link>
             </nav>
           </div>
@@ -263,30 +283,32 @@ const Header = () => {
 
       {/* ANNOUNCEMENT DETAILS MODAL */}
       {showDetailsModal && announcement && (
-        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md transition-all">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm transition-all">
           <div 
-            className="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-lg w-full shadow-2xl animate-in fade-in zoom-in duration-300"
+            className="bg-card rounded-[2.5rem] p-8 sm:p-10 max-w-lg w-full shadow-2xl border border-border animate-in fade-in zoom-in duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
-              <div className="bg-stone-100 p-4 rounded-3xl text-[#5D3A26]">
+              <div className="bg-primary/10 p-4 rounded-3xl text-primary">
                 <Megaphone size={28} />
               </div>
               <button 
                 onClick={() => setShowDetailsModal(false)} 
-                className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-400 hover:text-stone-600"
+                className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
               >
                 <X size={24} />
               </button>
             </div>
-            <h2 className="text-3xl font-serif font-bold text-[#2D1B14] mb-4 leading-tight">{announcement.title}</h2>
-            <div className="h-px bg-stone-100 w-full mb-6" />
-            <p className="text-stone-600 leading-relaxed mb-8 whitespace-pre-wrap text-lg">
+            <h2 className="text-3xl font-serif font-bold text-foreground mb-4 leading-tight">
+              {announcement.title}
+            </h2>
+            <div className="h-px bg-border w-full mb-6" />
+            <p className="text-muted-foreground leading-relaxed mb-8 whitespace-pre-wrap text-lg">
               {announcement.content}
             </p>
             <button 
               onClick={() => setShowDetailsModal(false)}
-              className="w-full py-4 bg-[#5D3A26] text-white rounded-2xl font-bold hover:bg-[#4A2E1E] transition-all shadow-lg shadow-stone-200 active:scale-[0.98]"
+              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg active:scale-[0.98]"
             >
               Got it, thanks!
             </button>

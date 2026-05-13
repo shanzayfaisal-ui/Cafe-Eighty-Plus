@@ -74,7 +74,6 @@ const MenuPage = () => {
     item.image_url || getImage(item.image_key || 'espresso');
 
   const handleAdd = (item: MenuItem, categoryName: string) => {
-    // PREVENT ADDING IF: It's a retail category AND stock is 0
     const isRetailCategory = ["Coffee Beans", "Merchandise"].includes(categoryName);
     if (isRetailCategory && item.stock !== undefined && item.stock <= 0) return;
 
@@ -98,25 +97,25 @@ const MenuPage = () => {
   };
 
   return (
-    <main className="section-padding bg-gradient-to-b from-[#f8f5f2] via-[#f1ebe5] to-[#eae3db] min-h-screen">
+    <main className="section-padding bg-background text-foreground min-h-screen transition-colors duration-300">
       <div className="container-narrow mx-auto">
 
         <div className="text-center mb-16 animate-fade-in">
           <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-3">What We Serve</p>
-          <h1 className="text-5xl font-serif font-bold tracking-tight mb-4 text-[#2D1B14]">Our Menu</h1>
+          <h1 className="text-5xl font-serif font-bold tracking-tight mb-4">Our Menu</h1>
           <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
             Crafted with passion, served with love. Every cup is a masterpiece.
           </p>
-          <p className="text-[10px] uppercase tracking-widest text-stone-400 mt-4">All prices exclusive of taxes</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 mt-4">All prices exclusive of taxes</p>
         </div>
 
         {loading ? (
           Array.from({ length: 2 }).map((_, i) => (
             <section key={i} className="mb-16">
-              <Skeleton className="h-8 w-48 mb-8 bg-stone-200" />
+              <Skeleton className="h-8 w-48 mb-8 bg-muted" />
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 4 }).map((_, j) => (
-                  <Skeleton key={j} className="h-32 rounded-2xl bg-stone-200" />
+                  <Skeleton key={j} className="h-32 rounded-2xl bg-muted" />
                 ))}
               </div>
             </section>
@@ -124,7 +123,7 @@ const MenuPage = () => {
         ) : (
           categories.map((cat) => (
             <section key={cat.id} className="mb-20">
-              <h2 className="text-2xl font-serif font-semibold mb-8 tracking-tight text-[#2D1B14] border-l-4 border-accent pl-4">
+              <h2 className="text-2xl font-serif font-semibold mb-8 tracking-tight border-l-4 border-accent pl-4">
                 {cat.name}
               </h2>
 
@@ -132,9 +131,6 @@ const MenuPage = () => {
                 {cat.items.map((item) => {
                   const isHighlighted = highlight.toLowerCase() === item.name.toLowerCase();
                   const itemId = `menu-${item.id}`;
-                  
-                  // --- NEW LOGIC ---
-                  // Only apply stock check if the category name matches retail items
                   const isRetailCategory = ["Coffee Beans", "Merchandise"].includes(cat.name);
                   const isOutOfStock = isRetailCategory && item.stock !== undefined && item.stock <= 0;
 
@@ -142,40 +138,40 @@ const MenuPage = () => {
                     <div
                       key={item.id}
                       ref={isHighlighted ? highlightRef : undefined}
-                      className={`flex gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-white shadow-sm transition-all duration-300 ${
-                        isHighlighted ? 'ring-2 ring-accent shadow-2xl bg-white' : ''
+                      className={`flex gap-4 p-4 rounded-2xl bg-card border border-border/50 shadow-sm transition-all duration-300 ${
+                        isHighlighted ? 'ring-2 ring-accent shadow-2xl scale-[1.02]' : ''
                       } ${
                         isOutOfStock 
-                        ? 'opacity-60 grayscale-[0.5]' 
-                        : 'hover:shadow-xl hover:-translate-y-1'
+                        ? 'opacity-60 grayscale-[0.4]' 
+                        : 'hover:shadow-md hover:border-accent/30'
                       }`}
                     >
-                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-inner bg-stone-100 relative">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-inner bg-muted relative">
                         <img
                           src={getMenuItemImage(item)}
                           alt={item.name}
                           className={`w-full h-full object-cover transition-transform duration-500 ${!isOutOfStock && 'hover:scale-110'}`}
                         />
                         {isOutOfStock && (
-                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                             <Ban className="text-white/80" size={20} />
+                          <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] flex items-center justify-center">
+                             <Ban className="text-foreground/60" size={20} />
                           </div>
                         )}
                       </div>
 
                       <div className="min-w-0 flex flex-col flex-1">
                         <div className="flex justify-between items-start">
-                          <h3 className={`font-serif font-bold text-sm leading-tight ${isOutOfStock ? 'text-stone-500' : 'text-[#2D1B14]'}`}>
+                          <h3 className={`font-serif font-bold text-sm leading-tight ${isOutOfStock ? 'text-muted-foreground' : 'text-foreground'}`}>
                             {item.name}
                           </h3>
                         </div>
 
-                        <p className="text-[11px] text-stone-500 mt-1 line-clamp-2 leading-relaxed">
+                        <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
                           {item.description}
                         </p>
 
                         <div className="flex items-center justify-between mt-auto pt-3">
-                          <span className={`text-xs font-bold ${isOutOfStock ? 'text-stone-400' : 'text-accent'}`}>
+                          <span className={`text-xs font-bold ${isOutOfStock ? 'text-muted-foreground/60' : 'text-accent'}`}>
                             {item.price || `Rs. ${item.price_num}`}
                           </span>
 
@@ -185,14 +181,14 @@ const MenuPage = () => {
                               onClick={() => handleAdd(item, cat.name)}
                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-200 ${
                                 isOutOfStock
-                                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
                                   : addedIds.has(itemId)
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-[#2D1B14] text-white hover:bg-accent'
+                                    ? 'bg-green-500/10 text-green-600 border border-green-500/20'
+                                    : 'bg-primary text-primary-foreground hover:bg-accent hover:text-white'
                               }`}
                             >
                               {isOutOfStock ? (
-                                "Out of Stock"
+                                "Sold Out"
                               ) : addedIds.has(itemId) ? (
                                 <>
                                   <Check size={10} strokeWidth={3} /> Added
@@ -215,10 +211,10 @@ const MenuPage = () => {
         )}
 
         {totalItems > 0 && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce-subtle">
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-3 bg-[#2D1B14] text-white px-10 py-4 rounded-full shadow-2xl font-bold tracking-widest uppercase text-xs hover:bg-accent transition-all hover:scale-105"
+              className="flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 rounded-full shadow-2xl font-bold tracking-widest uppercase text-xs hover:bg-accent transition-all hover:scale-105 active:scale-95"
             >
               <ShoppingBag size={18} /> View Cart ({totalItems})
             </button>

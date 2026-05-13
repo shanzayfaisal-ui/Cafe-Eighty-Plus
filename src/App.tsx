@@ -11,9 +11,8 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import OrderNotificationDisplay from "@/components/OrderNotificationDisplay";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
-import ProtectedUserRoute from '@/components/ProtectedUserRoute';
-import AnnouncementBanner from '@/components/AnnouncementBanner';
-import { AuthProvider } from '@/contexts/AuthContext';
+import AnnouncementBanner from "@/components/AnnouncementBanner";
+import { ThemeToggle } from "@/components/ThemeToggle"; // <-- IMPORTED TOGGLE
 
 // Public Pages
 import Index from "./pages/Index";
@@ -47,7 +46,7 @@ import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminAnnouncementsPage from "./pages/admin/AdminAnnouncementsPage";
 import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
 import AdminReviewsPage from "./pages/admin/AdminReviewsPage";
-import AdminCoffeeGuide from "./pages/admin/AdminCoffeeGuidePage"; // <-- IMPORTED NEW PAGE
+import AdminCoffeeGuide from "./pages/admin/AdminCoffeeGuidePage"; 
 import GalleryManager from "./components/admin/GalleryManager";
 
 const queryClient = new QueryClient();
@@ -61,13 +60,17 @@ const AppContent = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    /* Added transition classes for smooth theme switching */
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       {!isAdminRoute && (
         <div className="sticky top-0 z-[100] w-full shadow-sm bg-background">
           <AnnouncementBanner />
           <Header />
         </div>
       )}
+
+      {/* Manual Theme Toggle - Appears on all pages */}
+      <ThemeToggle />
 
       {!isAdminRoute && <CartDrawer />}
       
@@ -110,7 +113,7 @@ const AppContent = () => {
             <Route path="announcements" element={<AdminAnnouncementsPage />} /> 
             <Route path="messages" element={<AdminMessagesPage />} />
             <Route path="reviews" element={<AdminReviewsPage />} />
-            <Route path="coffee-guide" element={<AdminCoffeeGuide />} /> {/* <-- ADDED ROUTE */}
+            <Route path="coffee-guide" element={<AdminCoffeeGuide />} />
             <Route path="settings" element={<AdminSettingsPage />} />
           </Route>
           

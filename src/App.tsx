@@ -6,13 +6,15 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { CartProvider } from "@/contexts/CartContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { AuthProvider } from '@/contexts/AuthContext'; 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import OrderNotificationDisplay from "@/components/OrderNotificationDisplay";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
+import ProtectedUserRoute from "@/components/ProtectedUserRoute"; // <-- FIXED: Added missing import
 import AnnouncementBanner from "@/components/AnnouncementBanner";
-import { ThemeToggle } from "@/components/ThemeToggle"; // <-- IMPORTED TOGGLE
+import { ThemeToggle } from "@/components/ThemeToggle"; 
 
 // Public Pages
 import Index from "./pages/Index";
@@ -60,7 +62,6 @@ const AppContent = () => {
   }, [location.pathname]);
 
   return (
-    /* Added transition classes for smooth theme switching */
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       {!isAdminRoute && (
         <div className="sticky top-0 z-[100] w-full shadow-sm bg-background">
@@ -69,8 +70,10 @@ const AppContent = () => {
         </div>
       )}
 
-      {/* Manual Theme Toggle - Appears on all pages */}
-      <ThemeToggle />
+      {/* Manual Theme Toggle */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
 
       {!isAdminRoute && <CartDrawer />}
       
@@ -95,6 +98,8 @@ const AppContent = () => {
 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          
+          {/* Protected User Route */}
           <Route path="/profile" element={<ProtectedUserRoute />}>
             <Route index element={<ProfilePage />} />
           </Route>

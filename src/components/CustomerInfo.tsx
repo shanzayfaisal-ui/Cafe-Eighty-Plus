@@ -14,46 +14,55 @@ const CustomerInfo = () => {
   const { toast } = useToast();
   const { user, profile } = useAuth();
   
-  const [customer, setCustomer] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    streetAddress: "", // House #, Street, Area
-    city: "",
-    country: "Pakistan",
+  // Initialize state cleanly. If an active checkout session is in progress, use it.
+  // Otherwise, start with a pristine, blank form.
+  const [customer, setCustomer] = useState(() => {
+    const storedCustomer = localStorage.getItem("customer");
+    if (storedCustomer) {
+      const parsedData = JSON.parse(storedCustomer);
+      if (parsedData.country === "Lahore" || !parsedData.country) {
+        parsedData.country = "Pakistan";
+      }
+      return parsedData;
+    }
+    return {
+      name: "",
+      phone: "",
+      email: "",
+      streetAddress: "",
+      city: "",
+      country: "Pakistan",
+    };
   });
 
+  // This effect now ONLY runs if the user logs in mid-checkout or we explicitly need base contact info,
+  // but it WILL NOT force-fill previous addresses if an order was just cleared.
   useEffect(() => {
     const storedCustomer = localStorage.getItem("customer");
 
-    if (storedCustomer) {
-      setCustomer(JSON.parse(storedCustomer));
-      return;
-    }
+    // If there's already active text being typed or an order session active, don't touch it
+    if (storedCustomer) return;
 
-    const savedName = profile?.full_name ?? user?.user_metadata?.full_name ?? "";
-    const savedEmail = user?.email ?? "";
-    const savedPhone = profile?.phone ?? "";
-    const savedAddress = profile?.address ?? "";
-
-    const addressParts = savedAddress.split(',').map((part) => part.trim()).filter(Boolean);
-    const city = addressParts.length > 1 ? addressParts[addressParts.length - 2] : "";
-    const streetAddress = addressParts.length > 2 ? addressParts.slice(0, -2).join(', ') : addressParts[0] ?? "";
-
+    // Optional: Pre-fill basic contact info for logged-in accounts if they haven't typed anything yet,
+    // but keep delivery address fields completely blank for a fresh slate.
     if (user || profile) {
-      setCustomer({
-        name: savedName,
-        phone: savedPhone,
-        email: savedEmail,
-        streetAddress,
-        city,
-        country: addressParts.length > 0 ? addressParts[addressParts.length - 1] : "Pakistan",
-      });
+      const savedName = profile?.full_name ?? user?.user_metadata?.full_name ?? "";
+      const savedEmail = user?.email ?? "";
+      const savedPhone = profile?.phone ?? "";
+
+      setCustomer((prev) => ({
+        ...prev,
+        name: prev.name || savedName,
+        email: prev.email || savedEmail,
+        phone: prev.phone || savedPhone,
+        streetAddress: "", // Always empty for a new order session
+        city: "",          // Always unselected for a new order session
+        country: "Pakistan"
+      }));
     }
   }, [profile, user]);
 
   const handleChange = (field: string, value: string) => {
-    // For phone, only allow numbers and limit to 11 characters
     if (field === "phone") {
       const onlyNums = value.replace(/[^0-9]/g, "");
       if (onlyNums.length <= 11) {
@@ -67,7 +76,6 @@ const CustomerInfo = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Validation for required fields
     if (!customer.name || !customer.phone || !customer.streetAddress || !customer.city) {
       toast({
         title: "Missing Information",
@@ -77,7 +85,6 @@ const CustomerInfo = () => {
       return;
     }
 
-    // 2. Strict Pakistani Mobile Validation (Starts with 03 and is 11 digits)
     const isValidPKMobile = /^03\d{9}$/.test(customer.phone);
     if (!isValidPKMobile) {
       toast({
@@ -88,11 +95,10 @@ const CustomerInfo = () => {
       return;
     }
 
-    // 3. Prepare data and save to LocalStorage
-    // We combine the structured address into a single string for the orders table
     const fullData = {
       ...customer,
-      address: `${customer.streetAddress}, ${customer.city}, ${customer.country}`
+      country: "Pakistan",
+      address: `${customer.streetAddress}, ${customer.city}, Pakistan`
     };
     
     localStorage.setItem("customer", JSON.stringify(fullData));
@@ -102,7 +108,6 @@ const CustomerInfo = () => {
       description: "Proceeding to payment...",
     });
 
-    // 4. Navigate to Payment page
     navigate("/payment");
   };
 
@@ -111,6 +116,7 @@ const CustomerInfo = () => {
       <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl shadow-stone-200/40 p-8 sm:p-10 border border-stone-50">
         
         <button 
+          type="button"
           onClick={() => navigate(-1)} 
           className="flex items-center gap-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest hover:text-[#5D3A26] transition-colors mb-6"
         >
@@ -215,7 +221,7 @@ const CustomerInfo = () => {
                 <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-300" />
                 <input
                   disabled
-                  value={customer.country}
+                  value="Pakistan"
                   className="w-full bg-stone-100 border border-stone-100 rounded-2xl py-3.5 pl-10 pr-4 text-sm text-stone-500 cursor-not-allowed"
                 />
               </div>

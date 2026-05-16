@@ -120,7 +120,11 @@ const Payment = () => {
       }
 
       console.log('[Payment] Order created successfully:', order.id);
+      
+      // ✨ Bug Fix: Completely clear cache so next customer info starts completely fresh
       clearCart();
+      localStorage.removeItem("customer");
+
       const redirectUrl = `/order-success?order_id=${order.id}`;
       console.log('[Payment] Redirecting to:', redirectUrl);
       navigate(redirectUrl);

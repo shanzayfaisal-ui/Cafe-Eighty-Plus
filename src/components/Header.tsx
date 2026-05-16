@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight, User } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight } from 'lucide-react'; // Removed 'User' icon import
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,6 +111,11 @@ const Header = () => {
   const textColor = !scrolled && isHome ? 'text-white' : 'text-foreground';
   const iconHoverBg = !scrolled && isHome ? 'hover:bg-white/10' : 'hover:bg-accent/10';
 
+  // Handles capsule border values dynamically depending on header backdrop visibility
+  const buttonBorderColor = !scrolled && isHome 
+    ? 'border-white/40 hover:border-white' 
+    : 'border-border hover:border-foreground/40';
+
   return (
     <>
       <header className={`fixed top-0 inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col`}>
@@ -176,7 +181,7 @@ const Header = () => {
               </nav>
 
               {/* Actions */}
-              <div className="flex items-center gap-1 sm:gap-2">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="relative" ref={searchRef}>
                   <button 
                     onClick={() => setShowSearch(!showSearch)} 
@@ -221,7 +226,7 @@ const Header = () => {
 
                 <button 
                   onClick={() => setIsCartOpen(true)} 
-                  className={`relative p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                  className={`relative p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors mr-1`}
                   aria-label="Shopping Cart"
                 >
                   <ShoppingBag size={20} strokeWidth={2} />
@@ -232,12 +237,12 @@ const Header = () => {
                   )}
                 </button>
 
+                {/* TEXT PROFILE BUTTON (Capsule design matching image layout parameters) */}
                 <Link
                   to={user ? '/profile' : '/login'}
-                  className={`hidden sm:flex p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
-                  aria-label={user ? 'Profile' : 'Login'}
+                  className={`hidden sm:inline-flex items-center justify-center border ${buttonBorderColor} rounded-full px-5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] ${textColor} transition-all duration-300`}
                 >
-                  <User size={20} strokeWidth={2} />
+                  {user ? 'Profile' : 'Login'}
                 </Link>
 
                 <button 
@@ -271,9 +276,8 @@ const Header = () => {
               <Link
                 to={user ? '/profile' : '/login'}
                 onClick={() => setMobileOpen(false)}
-                className="py-4 px-6 rounded-xl font-bold uppercase text-[11px] tracking-widest text-muted-foreground hover:bg-muted/50 flex items-center gap-2"
+                className="py-4 px-6 rounded-xl font-bold uppercase text-[11px] tracking-widest text-muted-foreground hover:bg-muted/50 transition-colors"
               >
-                <User size={16} />
                 {user ? 'Profile' : 'Login / Register'}
               </Link>
             </nav>

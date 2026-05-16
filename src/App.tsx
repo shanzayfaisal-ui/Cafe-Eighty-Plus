@@ -73,10 +73,12 @@ const AppContent = () => {
         </div>
       )}
 
-      {/* Manual Theme Toggle */}
-      <div className="fixed bottom-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
+      {/* Manual Theme Toggle - Now hidden on Admin routes */}
+      {!isAdminRoute && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+      )}
 
       {!isAdminRoute && <CartDrawer />}
       

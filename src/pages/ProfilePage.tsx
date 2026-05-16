@@ -86,35 +86,37 @@ const ProfilePage = () => {
   const orderCount = useMemo(() => orders.length, [orders]);
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] py-16 px-4 sm:px-6 lg:px-10">
+    <div className="min-h-screen bg-background text-foreground py-28 px-4 sm:px-6 lg:px-10 transition-colors duration-300">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
-          <div className="bg-white rounded-[2.5rem] border border-stone-100 p-8 shadow-sm">
+          
+          {/* LEFT SECTION: MAIN PROFILE INFORMATION CARD */}
+          <div className="bg-card rounded-[2.5rem] border border-border/60 dark:border-border/20 p-8 shadow-soft">
             <div className="flex items-center justify-between gap-4 mb-8">
               <div>
-                <p className="text-sm uppercase tracking-[0.3em] text-stone-400 font-bold">Profile</p>
-                <h1 className="text-3xl font-serif font-bold text-[#2D1B14] mt-2">My Account</h1>
+                <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground font-bold">Profile</p>
+                <h1 className="text-3xl font-serif font-bold text-gradient-coffee mt-2 dark:text-foreground">My Account</h1>
               </div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center gap-2 rounded-full border border-stone-200 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-stone-700 hover:bg-stone-50 transition"
+                className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-background px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-foreground hover:bg-muted/50 transition-colors"
               >
                 <LogOut size={16} /> Logout
               </button>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl bg-stone-50 border border-stone-100 p-5">
-                <p className="text-xs uppercase tracking-[0.35em] text-stone-400 mb-2">Account</p>
-                <div className="space-y-2 text-sm text-stone-700">
-                  <p className="font-semibold">{user?.email ?? 'No email available'}</p>
-                  <p className="text-stone-500">Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</p>
+              <div className="rounded-3xl bg-muted/30 border border-border/40 p-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground mb-2">Account</p>
+                <div className="space-y-2 text-sm">
+                  <p className="font-semibold text-foreground">{user?.email ?? 'No email available'}</p>
+                  <p className="text-muted-foreground">Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</p>
                 </div>
               </div>
-              <div className="rounded-3xl bg-stone-50 border border-stone-100 p-5">
-                <p className="text-xs uppercase tracking-[0.35em] text-stone-400 mb-2">Saved details</p>
-                <div className="space-y-2 text-sm text-stone-700">
-                  <p>{form.full_name || 'Full name not saved'}</p>
+              <div className="rounded-3xl bg-muted/30 border border-border/40 p-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground mb-2">Saved details</p>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><span className="font-medium text-foreground">{form.full_name || 'Full name not saved'}</span></p>
                   <p>{form.phone || 'Phone not saved'}</p>
                   <p>{form.address || 'Address not saved'}</p>
                 </div>
@@ -122,27 +124,42 @@ const ProfilePage = () => {
             </div>
 
             <div className="mt-10">
-              <h2 className="text-lg font-semibold text-stone-900 mb-4">Edit profile information</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Edit profile information</h2>
               <div className="grid gap-4">
-                <label className="block space-y-2 text-sm text-stone-700">
-                  <span className="font-semibold uppercase tracking-[0.2em] text-stone-400 text-[10px]">Full name</span>
-                  <Input value={form.full_name} onChange={(event) => handleFieldChange('full_name', event.target.value)} placeholder="Name" />
+                <label className="block space-y-2 text-sm">
+                  <span className="font-semibold uppercase tracking-[0.2em] text-muted-foreground text-[10px]">Full name</span>
+                  <Input 
+                    value={form.full_name} 
+                    onChange={(event) => handleFieldChange('full_name', event.target.value)} 
+                    placeholder="Name"
+                    className="bg-background dark:bg-input border-border/60 text-foreground dark:border-border/40" 
+                  />
                 </label>
 
-                <label className="block space-y-2 text-sm text-stone-700">
-                  <span className="font-semibold uppercase tracking-[0.2em] text-stone-400 text-[10px]">Phone</span>
-                  <Input value={form.phone} onChange={(event) => handleFieldChange('phone', event.target.value)} placeholder="03XXXXXXXXX" />
+                <label className="block space-y-2 text-sm">
+                  <span className="font-semibold uppercase tracking-[0.2em] text-muted-foreground text-[10px]">Phone</span>
+                  <Input 
+                    value={form.phone} 
+                    onChange={(event) => handleFieldChange('phone', event.target.value)} 
+                    placeholder="03XXXXXXXXX" 
+                    className="bg-background dark:bg-input border-border/60 text-foreground dark:border-border/40"
+                  />
                 </label>
 
-                <label className="block space-y-2 text-sm text-stone-700">
-                  <span className="font-semibold uppercase tracking-[0.2em] text-stone-400 text-[10px]">Address</span>
-                  <Input value={form.address} onChange={(event) => handleFieldChange('address', event.target.value)} placeholder="House, Street, City, Country" />
+                <label className="block space-y-2 text-sm">
+                  <span className="font-semibold uppercase tracking-[0.2em] text-muted-foreground text-[10px]">Address</span>
+                  <Input 
+                    value={form.address} 
+                    onChange={(event) => handleFieldChange('address', event.target.value)} 
+                    placeholder="House, Street, City, Country" 
+                    className="bg-background dark:bg-input border-border/60 text-foreground dark:border-border/40"
+                  />
                 </label>
 
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="w-full bg-[#5D3A26] text-white rounded-2xl py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#4A2E1E] transition-colors disabled:opacity-50"
+                  className="w-full bg-[#5D3A26] dark:bg-primary text-white dark:text-primary-foreground rounded-2xl py-4 uppercase tracking-[0.2em] text-xs font-bold hover:opacity-90 transition-all shadow-md disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save profile'}
                 </button>
@@ -150,43 +167,43 @@ const ProfilePage = () => {
             </div>
           </div>
 
+          {/* RIGHT SECTION: SIDEBAR HISTORIES & ORDERS COUNTER */}
           <div className="space-y-6">
-            <div className="rounded-[2.5rem] border border-stone-100 bg-white p-8 shadow-sm">
+            <div className="rounded-[2.5rem] border border-border/60 dark:border-border/20 bg-card p-8 shadow-soft">
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.35em] text-stone-400 font-bold">Orders</p>
-                  <p className="text-2xl font-bold text-stone-900 mt-2">{orderCount}</p>
+                  <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground font-bold">Orders</p>
+                  <p className="text-2xl font-bold text-foreground mt-2">{orderCount}</p>
                 </div>
-                <div className="rounded-3xl bg-stone-50 p-3">
-                  <Clock3 className="text-[#5D3A26]" size={24} />
+                <div className="rounded-3xl bg-muted/50 p-3">
+                  <Clock3 className="text-[#5D3A26] dark:text-primary" size={24} />
                 </div>
               </div>
-              <p className="text-sm text-stone-500">Review your order history and find the delivery details for each purchase.</p>
+              <p className="text-sm text-muted-foreground">Review your order history and find the delivery details for each purchase.</p>
             </div>
 
-            <div className="rounded-[2.5rem] border border-stone-100 bg-white p-8 shadow-sm">
+            <div className="rounded-[2.5rem] border border-border/60 dark:border-border/20 bg-card p-8 shadow-soft">
               <div className="flex items-center gap-3 mb-6">
-                <div className="rounded-3xl bg-stone-50 p-3">
-                  <ListChecks className="text-[#5D3A26]" size={20} />
+                <div className="rounded-3xl bg-muted/50 p-3">
+                  <ListChecks className="text-[#5D3A26] dark:text-primary" size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.35em] text-stone-400 font-bold">Order history</p>
-                  <h2 className="text-xl font-semibold text-stone-900 mt-2">Recent activity</h2>
+                  <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground font-bold">Order history</p>
+                  <h2 className="text-xl font-semibold text-foreground mt-2">Recent activity</h2>
                 </div>
               </div>
 
               {loadingOrders ? (
                 <div className="space-y-3">
                   {Array.from({ length: 3 }).map((_, idx) => (
-                    <div key={idx} className="h-24 rounded-3xl bg-stone-50 animate-pulse" />
+                    <div key={idx} className="h-24 rounded-3xl bg-muted/30 border border-border/20 animate-pulse" />
                   ))}
                 </div>
               ) : orders.length === 0 ? (
-                <p className="text-sm text-stone-500">No past orders found. Place an order to see it here.</p>
+                <p className="text-sm text-muted-foreground">No past orders found. Place an order to see it here.</p>
               ) : (
                 <div className="space-y-4">
                   {orders.map((order) => {
-                    // Format payment method: "cash_on_delivery" → "Cash On Delivery"
                     const formatPaymentMethod = (method?: string | null) => {
                       if (!method) return 'Cash On Delivery';
                       return method
@@ -196,35 +213,37 @@ const ProfilePage = () => {
                     };
 
                     return (
-                      <div key={order.id} className="rounded-3xl border border-stone-100 bg-stone-50 p-5">
+                      <div key={order.id} className="rounded-3xl border border-border/40 bg-muted/20 p-5">
                         <div className="flex items-start justify-between gap-3 mb-4">
                           <div>
-                            <p className="text-xs uppercase tracking-[0.35em] text-stone-400 font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
-                            <p className="mt-2 text-lg font-semibold text-stone-900">Rs. {order.total.toLocaleString()}</p>
+                            <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
+                            <p className="mt-2 text-lg font-semibold text-foreground">Rs. {order.total.toLocaleString()}</p>
                           </div>
-                          <span className="rounded-full bg-[#E9F7EF] text-[#1F5D34] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em]">{order.status}</span>
+                          <span className="rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em]">
+                            {order.status}
+                          </span>
                         </div>
 
-                        <div className="space-y-3 text-sm text-stone-600">
-                          <p><span className="font-semibold text-stone-800">Payment</span>: {formatPaymentMethod(order.payment_method)}</p>
+                        <div className="space-y-3 text-sm text-muted-foreground">
+                          <p><span className="font-semibold text-foreground opacity-90">Payment</span>: {formatPaymentMethod(order.payment_method)}</p>
                           {order.address && (
-                            <p><span className="font-semibold text-stone-800">Delivery Address</span>: {order.address}</p>
+                            <p><span className="font-semibold text-foreground opacity-90">Delivery Address</span>: {order.address}</p>
                           )}
                         </div>
 
                         <div className="mt-4 space-y-2">
-                          <p className="text-sm font-semibold text-stone-800">Items ordered</p>
+                          <p className="text-sm font-semibold text-foreground opacity-90">Items ordered</p>
                           <div className="grid gap-2">
                             {Array.isArray(order.items) ? order.items.map((item: any) => (
-                              <div key={`${order.id}-${item.id}`} className="rounded-2xl bg-white p-3 border border-stone-100">
+                              <div key={`${order.id}-${item.id}`} className="rounded-2xl bg-card p-3 border border-border/40">
                                 <div className="flex justify-between items-start gap-2">
-                                  <p className="font-semibold text-stone-800">{item.name}</p>
-                                  <span className="text-xs font-bold text-stone-500 bg-stone-100 rounded-full px-2 py-1">×{item.quantity}</span>
+                                  <p className="font-semibold text-foreground text-sm">{item.name}</p>
+                                  <span className="text-xs font-bold text-muted-foreground bg-muted/60 rounded-full px-2 py-1">×{item.quantity}</span>
                                 </div>
-                                <p className="text-xs text-stone-500 mt-1">Rs. {item.price.toLocaleString()}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Rs. {item.price.toLocaleString()}</p>
                               </div>
                             )) : (
-                              <p className="text-sm text-stone-500">Item details unavailable</p>
+                              <p className="text-sm text-muted-foreground">Item details unavailable</p>
                             )}
                           </div>
                         </div>
@@ -235,6 +254,7 @@ const ProfilePage = () => {
               )}
             </div>
           </div>
+
         </div>
       </div>
     </div>

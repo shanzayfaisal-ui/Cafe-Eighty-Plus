@@ -1,18 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, Megaphone, ChevronRight } from 'lucide-react'; // Removed 'User' icon import
+import { Search, ShoppingBag, Menu, X } from 'lucide-react'; 
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.jpeg';
-
-// Interface matching your Admin Announcement schema
-interface Announcement {
-  id: string;
-  title: string;
-  content: string;
-  type: string;
-}
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -33,9 +25,8 @@ const Header = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<{ name: string }[]>([]);
   
-  // Announcement States
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  // ☕ Added back an internal check to dynamically calculate the top offset position
+  const [hasAnnouncement, setHasAnnouncement] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -45,25 +36,24 @@ const Header = () => {
 
   const isHome = location.pathname === '/';
 
-  // 1. Fetch live announcement from Admin database
+  // Check if an active announcement is currently visible to calculate spacing
   useEffect(() => {
-    const fetchAnnouncement = async () => {
+    const checkAnnouncement = async () => {
       const { data, error } = await supabase
         .from('announcements')
-        .select('*')
+        .select('id')
         .eq('is_active', true)
-        .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
-        setAnnouncement(data as unknown as Announcement);
+        setHasAnnouncement(true);
       }
     };
-    fetchAnnouncement();
+    checkAnnouncement();
   }, []);
 
-  // 2. Handle Scroll Effect
+  // 1. Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -72,7 +62,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 3. Search Logic & Click Outside
+  // 2. Search Logic
   useEffect(() => {
     const fetchResults = async () => {
       if (!query.trim()) {
@@ -110,38 +100,19 @@ const Header = () => {
 
   const textColor = !scrolled && isHome ? 'text-white' : 'text-foreground';
   const iconHoverBg = !scrolled && isHome ? 'hover:bg-white/10' : 'hover:bg-accent/10';
-
-  // Handles capsule border values dynamically depending on header backdrop visibility
   const buttonBorderColor = !scrolled && isHome 
     ? 'border-white/40 hover:border-white' 
     : 'border-border hover:border-foreground/40';
 
   return (
     <>
-      <header className={`fixed top-0 inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col`}>
+      {/* 🚀 RESTORED ORIGINAL: Keeps original 'fixed' placement, but safely shifts down 'top-[41px]' only when the banner is visible! */}
+      <header 
+        className={`fixed inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col ${
+          hasAnnouncement ? 'top-[41px]' : 'top-0'
+        }`}
+      >
         
-        {/* ANNOUNCEMENT BAR */}
-        {announcement && (
-          <div className="bg-primary text-primary-foreground py-2 px-4 z-[10000] border-b border-white/10">
-            <div className="container mx-auto flex justify-center items-center gap-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest">
-              <div className="flex items-center gap-2">
-                <Megaphone size={12} className={announcement.type === 'urgent' ? "text-destructive-foreground animate-pulse" : "opacity-80"} />
-                <span className="truncate max-w-[180px] sm:max-w-none">{announcement.title}</span>
-              </div>
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowDetailsModal(true);
-                }}
-                className="shrink-0 px-2.5 py-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-md text-[9px] transition-all flex items-center gap-1"
-              >
-                DETAILS <ChevronRight size={10} />
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* MAIN NAVBAR */}
         <div className={`${headerBg} transition-all duration-300`}>
           <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
@@ -237,7 +208,7 @@ const Header = () => {
                   )}
                 </button>
 
-                {/* TEXT PROFILE BUTTON (Capsule design matching image layout parameters) */}
+                {/* Profile Button */}
                 <Link
                   to={user ? '/profile' : '/login'}
                   className={`hidden sm:inline-flex items-center justify-center border ${buttonBorderColor} rounded-full px-5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] ${textColor} transition-all duration-300`}
@@ -284,41 +255,6 @@ const Header = () => {
           </div>
         )}
       </header>
-
-      {/* ANNOUNCEMENT DETAILS MODAL */}
-      {showDetailsModal && announcement && (
-        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm transition-all">
-          <div 
-            className="bg-card rounded-[2.5rem] p-8 sm:p-10 max-w-lg w-full shadow-2xl border border-border animate-in fade-in zoom-in duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-start mb-6">
-              <div className="bg-primary/10 p-4 rounded-3xl text-primary">
-                <Megaphone size={28} />
-              </div>
-              <button 
-                onClick={() => setShowDetailsModal(false)} 
-                className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <h2 className="text-3xl font-serif font-bold text-foreground mb-4 leading-tight">
-              {announcement.title}
-            </h2>
-            <div className="h-px bg-border w-full mb-6" />
-            <p className="text-muted-foreground leading-relaxed mb-8 whitespace-pre-wrap text-lg">
-              {announcement.content}
-            </p>
-            <button 
-              onClick={() => setShowDetailsModal(false)}
-              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg active:scale-[0.98]"
-            >
-              Got it, thanks!
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

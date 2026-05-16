@@ -56,6 +56,9 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  
+  // 🚀 Checks if current route is an Auth page
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -73,8 +76,8 @@ const AppContent = () => {
         </div>
       )}
 
-      {/* Manual Theme Toggle - Now hidden on Admin routes */}
-      {!isAdminRoute && (
+      {/* 🚀 Manual Theme Toggle - Safely hidden on Admin routes AND Auth pages */}
+      {!isAdminRoute && !isAuthPage && (
         <div className="fixed bottom-4 right-4 z-50">
           <ThemeToggle />
         </div>

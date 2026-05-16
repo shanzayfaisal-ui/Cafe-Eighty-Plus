@@ -5,6 +5,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import ProductForm, { type ProductFormValues } from '@/components/admin/ProductForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getImage } from '@/lib/imageMap';
@@ -90,16 +91,51 @@ const AdminProductsPage = () => {
 
     const handleDelete = async (product: ProductRecord) => {
         if (!window.confirm(`Delete ${product.name}?`)) return;
+        const deletedProduct = product;
+        let cleanupTimer: ReturnType<typeof window.setTimeout> | null = null;
+
         try {
             const { error } = await supabase.from('menu_items').delete().eq('id', product.id);
             if (error) throw error;
-            
-            if (product.image_path) {
-                await supabase.storage.from(STORAGE_BUCKET).remove([product.image_path]);
+
+            toast({
+                title: "Product deleted",
+                description: "Undo within 1 minute.",
+                action: (
+                    <ToastAction
+                        altText="Undo delete"
+                        onClick={async () => {
+                            if (cleanupTimer) {
+                                clearTimeout(cleanupTimer);
+                                cleanupTimer = null;
+                            }
+
+                            const { error: restoreError } = await supabase.from('menu_items').insert([deletedProduct as any]);
+                            if (restoreError) {
+                                toast({ title: 'Restore failed', description: restoreError.message, variant: 'destructive' });
+                                return;
+                            }
+
+                            toast({ title: 'Product restored' });
+                            await loadData();
+                        }}
+                    >
+                        Undo
+                    </ToastAction>
+                ),
+                duration: 60000,
+            });
+
+            await loadData();
+
+            if (deletedProduct.image_path) {
+                cleanupTimer = window.setTimeout(async () => {
+                    const { error: storageError } = await supabase.storage.from(STORAGE_BUCKET).remove([deletedProduct.image_path]);
+                    if (storageError) {
+                        console.error("Image cleanup failed:", storageError.message);
+                    }
+                }, 60000);
             }
-            
-            toast({ title: "Product deleted" });
-            loadData();
         } catch (e: any) {
             toast({ title: "Delete failed", description: e.message, variant: "destructive" });
         }

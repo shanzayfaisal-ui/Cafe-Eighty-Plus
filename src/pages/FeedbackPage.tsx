@@ -112,7 +112,12 @@ const FeedbackPage = () => {
 
         {/* Google Reviews Link */}
         <div className="text-center mb-12">
-          <a href="#" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-secondary-foreground font-medium text-sm hover:bg-secondary/80 transition-colors">
+          <a
+            href="https://www.google.com/search?q=Eighty+Plus+164-A+Gulmohar+Sector+C+Bahria+Town+Lahore+reviews"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-secondary-foreground font-medium text-sm hover:bg-secondary/80 transition-colors"
+          >
             <Star size={16} className="text-accent" /> See our Google Reviews
           </a>
         </div>

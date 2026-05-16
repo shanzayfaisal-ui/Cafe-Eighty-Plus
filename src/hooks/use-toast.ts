@@ -52,7 +52,7 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-const addToRemoveQueue = (toastId: string) => {
+const addToRemoveQueue = (toastId: string, duration: number) => {
   if (toastTimeouts.has(toastId)) {
     return;
   }
@@ -63,7 +63,7 @@ const addToRemoveQueue = (toastId: string) => {
       type: "REMOVE_TOAST",
       toastId: toastId,
     });
-  }, TOAST_REMOVE_DELAY);
+  }, duration);
 
   toastTimeouts.set(toastId, timeout);
 };
@@ -88,10 +88,11 @@ export const reducer = (state: State, action: Action): State => {
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
-        addToRemoveQueue(toastId);
+        const matchingToast = state.toasts.find((toast) => toast.id === toastId);
+        addToRemoveQueue(toastId, matchingToast?.duration ?? TOAST_REMOVE_DELAY);
       } else {
         state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id);
+          addToRemoveQueue(toast.id, toast.duration ?? TOAST_REMOVE_DELAY);
         });
       }
 
@@ -155,6 +156,11 @@ function toast({ ...props }: Toast) {
       },
     },
   });
+
+  const duration = props.duration ?? TOAST_REMOVE_DELAY;
+  window.setTimeout(() => {
+    dispatch({ type: "DISMISS_TOAST", toastId: id });
+  }, duration);
 
   return {
     id: id,

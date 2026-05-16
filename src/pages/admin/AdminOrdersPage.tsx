@@ -3,10 +3,12 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useOrders } from "@/hooks/useOrders";
 import { useNewOrders } from "@/hooks/useOrderNotifications";
 import { useNotification } from "@/contexts/NotificationContext";
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { Order, OrderEvent } from "@/types/order";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  Eye, CheckCircle, XCircle, X, MapPin, Package, 
+  Eye, Trash2, CheckCircle, XCircle, X, MapPin, Package, 
   Phone, CheckCircle2, Bell, Clock, Calendar,
   Image as ImageIcon, ExternalLink, CreditCard, Wallet, Smartphone
 } from "lucide-react";
@@ -18,6 +20,7 @@ const AdminOrdersPage = () => {
   const [loading, setLoading] = useState(false);
   const { fetchOrders, updateOrderStatus } = useOrders();
   const { addNotification } = useNotification();
+  const { toast } = useToast();
 
   const getPaymentDetails = (method: string) => {
     switch (method?.toLowerCase()) {
@@ -68,6 +71,48 @@ const AdminOrdersPage = () => {
     setOrders(data);
     setLoading(false);
   }, [fetchOrders]);
+
+  const handleDeleteOrder = async (order: Order) => {
+    if (!window.confirm(`Delete order #${order.id.slice(0, 8).toUpperCase()}?`)) return;
+    const deletedOrder = order;
+
+    try {
+      const { error } = await supabase.from('orders').delete().eq('id', order.id);
+      if (error) throw error;
+
+      setOrders((prev) => prev.filter((o) => o.id !== order.id));
+      if (selectedOrder?.id === order.id) {
+        setSelectedOrder(null);
+      }
+
+      toast({
+        title: 'Order deleted',
+        description: 'Undo within 1 minute.',
+        action: (
+          <ToastAction altText="Undo delete" onClick={async () => {
+            const { data, error: restoreError } = await supabase
+              .from('orders')
+              .insert([deletedOrder])
+              .select()
+              .single();
+
+            if (restoreError) {
+              toast({ title: 'Restore failed', description: restoreError.message, variant: 'destructive' });
+              return;
+            }
+
+            toast({ title: 'Order restored' });
+            setOrders((prev) => [data as Order, ...prev]);
+          }}>
+            Undo
+          </ToastAction>
+        ),
+        duration: 60000,
+      });
+    } catch (error: any) {
+      toast({ title: 'Delete failed', description: error.message || 'Unable to delete order.', variant: 'destructive' });
+    }
+  };
 
   useEffect(() => {
     loadOrders();
@@ -172,12 +217,20 @@ const AdminOrdersPage = () => {
                         <span className="text-[13px] font-black text-[#2D1B14]">Rs. {order.total.toLocaleString()}</span>
                       </td>
                       <td className="px-8 py-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => setSelectedOrder(order)}
                           className="p-1.5 bg-stone-100 text-stone-500 hover:bg-[#2D1B14] hover:text-white rounded-lg transition-all"
                         >
                           <Eye size={16} />
                         </button>
+                        <button
+                          onClick={() => handleDeleteOrder(order)}
+                          className="p-1.5 bg-stone-100 text-stone-500 hover:bg-rose-100 hover:text-rose-600 rounded-lg transition-all"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                       </td>
                     </tr>
                   );

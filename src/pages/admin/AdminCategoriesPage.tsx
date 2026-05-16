@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { Plus, Trash2, Edit2, X, Check, ChevronDown, Package, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ const AdminCategoriesPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const fetchAllData = async () => {
     const { data: catData, error: catError } = await supabase
@@ -37,7 +39,7 @@ const AdminCategoriesPage = () => {
       .order("name", { ascending: true });
 
     if (catError) {
-      toast.error("Failed to load categories");
+      toast({ title: "Failed to load categories", variant: "destructive" });
       return;
     }
 
@@ -79,7 +81,7 @@ const AdminCategoriesPage = () => {
     setLoading(true);
     const { error } = await supabase.from("menu_categories").insert([{ name: newCategory }]);
     if (!error) {
-      toast.success("Category created");
+      toast({ title: "Category created" });
       setNewCategory("");
       fetchAllData();
     }
@@ -88,9 +90,33 @@ const AdminCategoriesPage = () => {
 
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm("Deleting this category will not delete its products, but they will become uncategorized. Continue?")) return;
+    const deletedCategory = categories.find((cat) => cat.id === id);
     const { error } = await supabase.from("menu_categories").delete().eq("id", id);
     if (!error) {
-      toast.success("Category removed");
+      toast({
+        title: "Category removed",
+        description: "Undo within 1 minute.",
+        action: (
+          <ToastAction
+            altText="Undo delete"
+            onClick={async () => {
+              if (!deletedCategory) return;
+              const { error: restoreError } = await supabase.from("menu_categories").insert([
+                { id: deletedCategory.id, name: deletedCategory.name },
+              ]);
+              if (restoreError) {
+                toast({ title: "Restore failed", description: restoreError.message, variant: "destructive" });
+                return;
+              }
+              toast({ title: "Category restored" });
+              fetchAllData();
+            }}
+          >
+            Undo
+          </ToastAction>
+        ),
+        duration: 60000,
+      });
       setExpandedId(null);
       fetchAllData();
     }
@@ -99,7 +125,7 @@ const AdminCategoriesPage = () => {
   const handleUpdateCategory = async (id: string) => {
     const { error } = await supabase.from("menu_categories").update({ name: editValue }).eq("id", id);
     if (!error) {
-      toast.success("Category renamed");
+      toast({ title: "Category renamed" });
       setEditingId(null);
       fetchAllData();
     }
@@ -110,7 +136,7 @@ const AdminCategoriesPage = () => {
     navigate('/admin/products', { 
       state: { editProduct: item } 
     });
-    toast.info(`Switching to Inventory to edit ${item.name}`);
+    toast({ title: `Switching to Inventory to edit ${item.name}` });
   };
 
   return (

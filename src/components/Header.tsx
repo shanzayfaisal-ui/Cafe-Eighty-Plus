@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.jpeg';
 import { LanguageToggle } from '@/components/LanguageToggle';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -34,6 +35,30 @@ const Header = () => {
   const navigate = useNavigate();
   const { totalItems, setIsCartOpen } = useCart();
   const { user } = useAuth();
+  const { settings: siteSettings } = useSiteSettings();
+
+  const headerPhone = siteSettings.site_phone || '+92 321 06820000';
+  const headerLocation = siteSettings.site_location || 'Bahria Town, Lahore';
+  const instagramUrl = siteSettings.site_instagram_url || 'https://www.instagram.com/eighty_pluscoffee/';
+  const facebookUrl = siteSettings.site_facebook_url || 'https://www.facebook.com/people/Eighty-Plus/61572608946241/';
+  const whatsappNumber = siteSettings.site_whatsapp_number || '+923210682000';
+  const whatsappLink = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}`;
+
+  const showHeaderPhone = siteSettings.site_phone_placement
+    ? (Array.isArray(siteSettings.site_phone_placement) ? siteSettings.site_phone_placement.includes('header') : siteSettings.site_phone_placement === 'header')
+    : true;
+  const showHeaderLocation = siteSettings.site_location_placement
+    ? (Array.isArray(siteSettings.site_location_placement) ? siteSettings.site_location_placement.includes('header') : siteSettings.site_location_placement === 'header')
+    : true;
+  const showHeaderInstagram = siteSettings.site_instagram_placement
+    ? (Array.isArray(siteSettings.site_instagram_placement) ? siteSettings.site_instagram_placement.includes('header') : siteSettings.site_instagram_placement === 'header')
+    : true;
+  const showHeaderFacebook = siteSettings.site_facebook_placement
+    ? (Array.isArray(siteSettings.site_facebook_placement) ? siteSettings.site_facebook_placement.includes('header') : siteSettings.site_facebook_placement === 'header')
+    : true;
+  const showHeaderWhatsApp = siteSettings.site_whatsapp_placement
+    ? (Array.isArray(siteSettings.site_whatsapp_placement) ? siteSettings.site_whatsapp_placement.includes('header') : siteSettings.site_whatsapp_placement === 'header')
+    : true;
 
   const isHome = location.pathname === '/';
 
@@ -119,20 +144,33 @@ const Header = () => {
           <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-2 text-[11px] uppercase tracking-[0.25em]">
               <div className="flex flex-wrap items-center gap-4">
-                <span className="flex items-center gap-2 text-muted-foreground">
-                  <Phone size={14} /> +92 321 06820000
-                </span>
-                <span className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin size={14} /> Bahria Town, Lahore
-                </span>
+                {showHeaderPhone && (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Phone size={14} /> {headerPhone}
+                  </span>
+                )}
+                {showHeaderLocation && (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin size={14} /> {headerLocation}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3">
-                <a href="https://www.instagram.com/eighty_pluscoffee/" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <Instagram size={16} /> Instagram
-                </a>
-                <a href="https://www.facebook.com/people/Eighty-Plus/61572608946241/" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <Facebook size={16} /> Facebook
-                </a>
+                {showHeaderInstagram && (
+                  <a href={instagramUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                    <Instagram size={16} /> Instagram
+                  </a>
+                )}
+                {showHeaderFacebook && (
+                  <a href={facebookUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                    <Facebook size={16} /> Facebook
+                  </a>
+                )}
+                {showHeaderWhatsApp && (
+                  <a href={whatsappLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                    <Phone size={16} /> WhatsApp
+                  </a>
+                )}
                 <LanguageToggle />
               </div>
             </div>

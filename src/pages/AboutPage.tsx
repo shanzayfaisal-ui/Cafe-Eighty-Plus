@@ -1,7 +1,12 @@
 import { MapPin, Clock, Users } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
-const AboutPage = () => (
-  <main className="section-padding">
+const AboutPage = () => {
+  const { settings: siteSettings } = useSiteSettings();
+  const mapEmbedUrl = siteSettings.site_map_embed_url || 'https://www.google.com/maps?q=Eighty+Plus+164-A+Gulmohar+Sector+C+Bahria+Town+Lahore+Pakistan&z=19&output=embed';
+
+  return (
+    <main className="section-padding">
     <div className="container-narrow mx-auto max-w-4xl">
       <div className="text-center mb-12 animate-fade-in">
         <p className="text-accent text-sm font-medium tracking-widest uppercase mb-2">Get to Know Us</p>
@@ -11,7 +16,7 @@ const AboutPage = () => (
       {/* Map */}
       <div className="warm-card overflow-hidden mb-10">
         <iframe
-          src="https://www.google.com/maps?q=Eighty+Plus+164-A+Gulmohar+Sector+C+Bahria+Town+Lahore+Pakistan&z=19&output=embed"
+          src={mapEmbedUrl}
           width="100%"
           height="400"
           style={{ border: 0 }}
@@ -50,6 +55,7 @@ const AboutPage = () => (
       </div>
     </div>
   </main>
-);
+  );
+};
 
 export default AboutPage;

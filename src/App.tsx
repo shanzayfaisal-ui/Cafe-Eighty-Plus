@@ -3,10 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CartProvider } from "@/contexts/CartContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AuthProvider } from '@/contexts/AuthContext'; 
+import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -55,25 +56,58 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const [hasAnnouncement, setHasAnnouncement] = useState(false);
   
-  // 🚀 Checks if current route is an Auth page
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [location.pathname]);
+
+  // Check if there is an active banner so we can push non-home components down further
+  useEffect(() => {
+    const checkAnnouncement = async () => {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        setHasAnnouncement(true);
+      } else {
+        setHasAnnouncement(false);
+      }
+    };
+    if (!isAdminRoute) {
+      checkAnnouncement();
+    }
+  }, [location.pathname, isAdminRoute]);
+
+  // Dynamic spacing manager: Home page is flush (pt-0). Inner pages adapt to the dual navbar height.
+  const mainPaddingClass = isAdminRoute
+    ? "pt-0"
+    : isHomePage
+    ? "pt-0"
+    : hasAnnouncement
+    ? "pt-[210px] sm:pt-[190px]"
+    : "pt-[170px] sm:pt-[150px]";
 
   return (
     <div 
       suppressHydrationWarning 
       className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300"
     >
+      {/* Structural layout render for visitor navigation */}
       {!isAdminRoute && (
-        <div className="sticky top-0 z-[100] w-full shadow-sm bg-background">
+        <>
           <AnnouncementBanner />
           <Header />
-        </div>
+          <CartDrawer />
+        </>
       )}
 
       {/* 🚀 Manual Theme Toggle - Safely hidden on Admin routes AND Auth pages */}
@@ -82,10 +116,8 @@ const AppContent = () => {
           <ThemeToggle />
         </div>
       )}
-
-      {!isAdminRoute && <CartDrawer />}
       
-      <main className="flex-1 flex flex-col relative z-10">
+      <main className={`flex-1 flex flex-col relative z-10 transition-all duration-300 ${mainPaddingClass}`}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />

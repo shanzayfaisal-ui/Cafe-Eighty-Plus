@@ -21,17 +21,21 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const location = useLocation();
+  
+  // 🛑 GUARD: If we are on any admin route, do not render the visitor website header at all.
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<{ name: string }[]>([]);
-  
-  // ☕ Added back an internal check to dynamically calculate the top offset position
   const [hasAnnouncement, setHasAnnouncement] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
   const navigate = useNavigate();
   const { totalItems, setIsCartOpen } = useCart();
   const { user } = useAuth();
@@ -61,23 +65,6 @@ const Header = () => {
     : true;
 
   const isHome = location.pathname === '/';
-
-  // Check if an active announcement is currently visible to calculate spacing
-  useEffect(() => {
-    const checkAnnouncement = async () => {
-      const { data, error } = await supabase
-        .from('announcements')
-        .select('id')
-        .eq('is_active', true)
-        .limit(1)
-        .maybeSingle();
-
-      if (!error && data) {
-        setHasAnnouncement(true);
-      }
-    };
-    checkAnnouncement();
-  }, []);
 
   // 1. Handle Scroll Effect
   useEffect(() => {
@@ -117,6 +104,23 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const checkAnnouncement = async () => {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        setHasAnnouncement(true);
+      }
+    };
+
+    checkAnnouncement();
+  }, []);
+
   // Logic for dynamic header coloring
   const headerBg = scrolled
     ? 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border/40' 
@@ -132,14 +136,9 @@ const Header = () => {
 
   return (
     <>
-      {/* 🚀 RESTORED ORIGINAL: Keeps original 'fixed' placement, but safely shifts down 'top-[41px]' only when the banner is visible! */}
-      <header 
-        className={`fixed inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col ${
-          hasAnnouncement ? 'top-[41px]' : 'top-0'
-        }`}
-      >
+      <header className={`fixed inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col ${hasAnnouncement ? 'top-[41px]' : 'top-0'}`}>
         
-        {/* MAIN NAVBAR */}
+        {/* SOCIAL LINKS & LANGUAGE BAR */}
         <div className="bg-background/90 border-b border-border/10 text-muted-foreground">
           <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-2 text-[11px] uppercase tracking-[0.25em]">
@@ -176,6 +175,8 @@ const Header = () => {
             </div>
           </div>
         </div>
+
+        {/* MAIN NAVIGATION ROW */}
         <div className={`${headerBg} transition-all duration-300`}>
           <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex items-center justify-between h-20 sm:h-24 transition-all duration-300">
@@ -192,7 +193,7 @@ const Header = () => {
                 </Link>
               </div>
 
-              {/* Desktop Nav */}
+              {/* Desktop Nav Links */}
               <nav className="hidden xl:flex items-center gap-1">
                 {navLinks.map(link => {
                   const isActive = location.pathname === link.to;
@@ -213,7 +214,7 @@ const Header = () => {
                 })}
               </nav>
 
-              {/* Actions */}
+              {/* Interactive Menu Actions */}
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="relative" ref={searchRef}>
                   <button 
@@ -270,7 +271,7 @@ const Header = () => {
                   )}
                 </button>
 
-                {/* Profile Button */}
+                {/* Profile Auth Button */}
                 <Link
                   to={user ? '/profile' : '/login'}
                   className={`hidden sm:inline-flex items-center justify-center border ${buttonBorderColor} rounded-full px-5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] ${textColor} transition-all duration-300`}
@@ -289,7 +290,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Responsive Mobile Drawer Menu */}
         {mobileOpen && (
           <div className="xl:hidden bg-background border-t border-border absolute top-full left-0 w-full shadow-2xl animate-in slide-in-from-top duration-300">
             <nav className="flex flex-col p-4 max-h-[80vh] overflow-y-auto">

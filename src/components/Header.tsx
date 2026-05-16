@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X } from 'lucide-react'; 
+import { Search, ShoppingBag, Menu, X, Phone, MapPin, Instagram, Facebook } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.jpeg';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -114,6 +115,29 @@ const Header = () => {
       >
         
         {/* MAIN NAVBAR */}
+        <div className="bg-background/90 border-b border-border/10 text-muted-foreground">
+          <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-2 text-[11px] uppercase tracking-[0.25em]">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="flex items-center gap-2 text-muted-foreground">
+                  <Phone size={14} /> +92 321 06820000
+                </span>
+                <span className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin size={14} /> Bahria Town, Lahore
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <a href="https://www.instagram.com/eighty_pluscoffee/" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                  <Instagram size={16} /> Instagram
+                </a>
+                <a href="https://www.facebook.com/people/Eighty-Plus/61572608946241/" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                  <Facebook size={16} /> Facebook
+                </a>
+                <LanguageToggle />
+              </div>
+            </div>
+          </div>
+        </div>
         <div className={`${headerBg} transition-all duration-300`}>
           <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex items-center justify-between h-20 sm:h-24 transition-all duration-300">

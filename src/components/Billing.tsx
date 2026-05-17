@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Receipt, Truck, ArrowLeft, ChevronRight } from "lucide-react";
-import { useCart } from "@/contexts/CartContext"; // UPDATED: Import useCart
+import { useCart } from "@/contexts/CartContext"; 
 
 type CartItem = {
   id: string;
@@ -12,27 +12,58 @@ type CartItem = {
 
 const Billing = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = useState<CartItem[]>([]);
   
-  // UPDATED: Destructure deliveryFee from useCart hook
-  const { deliveryFee } = useCart();
+  // Best Practice: Pull cart items straight from your context if available!
+  // If your context does NOT export 'cart', keeping the localStorage useEffect is fine.
+  const { deliveryFee, cart: contextCart } = useCart();
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (!storedCart) {
-      navigate("/");
-      return;
+    // Fallback if context doesn't handle the state lifecycle directly
+    if (contextCart && contextCart.length > 0) {
+      setCart(contextCart);
+      setIsInitializing(false);
+    } else {
+      const storedCart = localStorage.getItem("cart");
+      if (!storedCart) {
+        navigate("/");
+        return;
+      }
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        if (parsedCart.length === 0) {
+          navigate("/");
+          return;
+        }
+        setCart(parsedCart);
+      } catch (error) {
+        console.error("Failed to parse cart items:", error);
+        navigate("/");
+      } finally {
+        setIsInitializing(false);
+      }
     }
-    setCart(JSON.parse(storedCart));
-  }, [navigate]);
+  }, [navigate, contextCart]);
 
+  // Compute values purely on render from derived states
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  // UPDATED: Now uses deliveryFee from context
-  const grandTotal = total + deliveryFee;
+  const grandTotal = total + (deliveryFee || 0);
+
+  // Early return prevents UI flashes/layout pops while checking authentication or cart states
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center">
+        <div className="animate-pulse text-stone-400 font-bold tracking-widest text-xs uppercase">
+          Loading Summary...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6 font-sans antialiased">
@@ -76,7 +107,6 @@ const Billing = () => {
 
           <div className="flex justify-between text-xs font-bold text-stone-400 uppercase tracking-widest">
             <span className="flex items-center gap-2"><Truck size={14} /> Delivery</span>
-            {/* UPDATED: Displays dynamic deliveryFee */}
             <span>
               {deliveryFee > 0 ? `Rs. ${deliveryFee.toLocaleString()}` : 'Free'}
             </span>

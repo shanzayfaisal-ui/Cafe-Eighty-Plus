@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Home, AlertCircle, MapPin, ArrowLeft, XCircle, Loader2 } from "lucide-react";
-import { useCart, CartItem } from "@/contexts/CartContext"; // Removed DELIVERY_FEE from named imports
+import { useCart } from "@/contexts/CartContext";
 import { useOrders } from "@/hooks/useOrders";
 import { useOrderUpdates } from "@/hooks/useOrderNotifications";
 import { Order, OrderEvent } from "@/types/order";
 import OrderTracker from "./OrderTracker";
 import { useToast } from "@/hooks/use-toast";
 
-// Defined locally to prevent the "requested module does not provide an export" SyntaxError
 const DELIVERY_FEE = 150; 
 
 const OrderSuccess = () => {
@@ -18,14 +17,11 @@ const OrderSuccess = () => {
   const { fetchOrderById, updateOrderStatus } = useOrders();
   const { toast } = useToast();
   
-  const [orderDetails, setOrderDetails] = useState<{ cart: CartItem[]; customer: any } | null>(null);
   const [order, setOrder] = useState<Order | null>(null);
-  const [customerId, setCustomerId] = useState<string | null>(null);
   const [hasShownCancelNotification, setHasShownCancelNotification] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
-  // States for UI flow
   const [showTracker, setShowTracker] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -51,50 +47,27 @@ const OrderSuccess = () => {
           return;
         }
 
+        const fetchedOrder = await fetchOrderById(orderId);
         if (!isMounted) return;
 
-        try {
-          const fetchedOrder = await fetchOrderById(orderId);
-          if (!isMounted) return;
-
-          if (!fetchedOrder) {
-            console.warn('[OrderSuccess] Order not found for ID:', orderId);
-            if (isMounted) {
-              setErrorMessage('Order not found. Please contact support.');
-              setIsLoading(false);
-            }
-            return;
-          }
-
-          console.log('[OrderSuccess] Order fetched successfully:', fetchedOrder.id);
-          setOrder(fetchedOrder);
-          setCustomerId(fetchedOrder.customer_id ?? null);
-          setOrderDetails({
-            cart: Array.isArray(fetchedOrder.items) ? fetchedOrder.items : [],
-            customer: {
-              name: fetchedOrder.name,
-              phone: fetchedOrder.phone,
-              email: fetchedOrder.email,
-              address: fetchedOrder.address,
-            },
-          });
-
-          clearCart();
-        } catch (err) {
-          console.error('[OrderSuccess] Error fetching order:', err);
-          if (isMounted) {
-            setErrorMessage('Failed to load order details. Please try again.');
-            setIsLoading(false);
-          }
+        if (!fetchedOrder) {
+          console.warn('[OrderSuccess] Order not found for ID:', orderId);
+          setErrorMessage('Order not found. Please contact support.');
+          setIsLoading(false);
           return;
         }
 
-        if (!isMounted) return;
-        setIsLoading(false);
+        console.log('[OrderSuccess] Order fetched successfully:', fetchedOrder.id);
+        setOrder(fetchedOrder);
+        clearCart();
       } catch (err) {
-        console.error('[OrderSuccess] Unexpected error:', err);
+        console.error('[OrderSuccess] Error fetching order:', err);
         if (isMounted) {
-          setErrorMessage('An unexpected error occurred. Please try again.');
+          setErrorMessage('Failed to load order details. Please try again.');
+          setIsLoading(false);
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
@@ -105,9 +78,10 @@ const OrderSuccess = () => {
     return () => {
       isMounted = false;
     };
-  }, [navigate, clearCart, fetchOrderById, location.search]);
+  }, [location.search, fetchOrderById, clearCart]);
 
-  useOrderUpdates(customerId || "", (event: OrderEvent) => {
+  // Real-time hook will listen to changes safely when order details land
+  useOrderUpdates(order?.customer_id || "", (event: OrderEvent) => {
     try {
       setOrder(event.order);
       
@@ -130,7 +104,7 @@ const OrderSuccess = () => {
         });
       }
     } catch (err) {
-      console.error('Error updating order:', err);
+      console.error('Error updating order real-time:', err);
     }
   });
 
@@ -169,7 +143,7 @@ const OrderSuccess = () => {
     );
   }
 
-  if (errorMessage) {
+  if (errorMessage || !order) {
     return (
       <div className="min-h-screen bg-[#F5F2ED] py-8 px-4 sm:px-6 flex items-center justify-center">
         <div className="max-w-md mx-auto w-full bg-white rounded-[3rem] shadow-xl p-10 text-center">
@@ -180,7 +154,7 @@ const OrderSuccess = () => {
             Order Not Found
           </h2>
           <p className="text-stone-600 text-sm mb-8">
-            {errorMessage}
+            {errorMessage || 'Unable to load your order details. Please try placing an order again.'}
           </p>
           <button
             onClick={() => navigate("/")}
@@ -193,33 +167,11 @@ const OrderSuccess = () => {
     );
   }
 
-  if (!orderDetails || !order) {
-    return (
-      <div className="min-h-screen bg-[#F5F2ED] py-8 px-4 sm:px-6 flex items-center justify-center">
-        <div className="max-w-md mx-auto w-full bg-white rounded-[3rem] shadow-xl p-10 text-center">
-          <div className="bg-rose-100 p-4 rounded-full w-fit mx-auto mb-8">
-            <AlertCircle className="h-10 w-10 text-rose-600" />
-          </div>
-          <h2 className="text-2xl font-serif font-bold text-stone-800 mb-2">
-            Order Not Found
-          </h2>
-          <p className="text-stone-600 text-sm mb-8">
-            Unable to load your order details. Please try placing an order again.
-          </p>
-          <button
-            onClick={() => navigate("/")}
-            className="w-full bg-[#5D3A26] text-white py-5 rounded-2xl font-bold uppercase text-xs hover:bg-[#4a2e1e] transition-colors flex items-center justify-center gap-2"
-          >
-            <Home className="h-4 w-4" /> Back to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const subtotal = orderDetails.cart.length > 0 
-    ? orderDetails.cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-    : (order?.total || 0) - DELIVERY_FEE;
+  // Derive computational states cleanly from a single source of truth
+  const orderItems = Array.isArray(order.items) ? order.items : [];
+  const subtotal = orderItems.length > 0
+    ? orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+    : (order.total || 0) - DELIVERY_FEE;
 
   const isOrderCancelled = order.status === 'Cancelled';
 
@@ -258,13 +210,13 @@ const OrderSuccess = () => {
 
             <div className="bg-[#F5F2ED] rounded-3xl p-6 mb-8 text-left">
               <div className="space-y-2 mb-4">
-                {(orderDetails.cart.length > 0 ? orderDetails.cart : order.items || []).slice(0, 3).map((item: any, idx: number) => (
+                {orderItems.slice(0, 3).map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between text-sm">
                     <span className="text-stone-600">{item.quantity}x {item.name}</span>
                     <span className="font-medium text-stone-800">Rs. {(item.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
-                {(orderDetails.cart.length > 3) && <p className="text-[10px] text-stone-400">...and more items</p>}
+                {orderItems.length > 3 && <p className="text-[10px] text-stone-400">...and more items</p>}
               </div>
               <div className="border-t border-stone-200 pt-4">
                 <div className="flex justify-between font-serif font-bold text-lg text-[#5D3A26]">
@@ -314,7 +266,7 @@ const OrderSuccess = () => {
             <div className="mt-8 pt-6 border-t border-stone-50">
               <p className="text-[10px] font-bold uppercase text-stone-400 mb-1">Order Reference</p>
               <p className="font-mono text-sm font-bold text-[#2D1B14]">
-                {order?.id ? `#${order.id.slice(0, 8).toUpperCase()}` : '...'}
+                {order.id ? `#${order.id.slice(0, 8).toUpperCase()}` : '...'}
               </p>
             </div>
           </div>

@@ -110,7 +110,13 @@ const AdminProductsPage = () => {
                                 cleanupTimer = null;
                             }
 
-                            const { error: restoreError } = await supabase.from('menu_items').insert([deletedProduct as any]);
+                            // Strip out front-end specific categoryName string value before saving to DB
+                            const { categoryName, ...databasePayload } = deletedProduct;
+
+                            const { error: restoreError } = await supabase
+                                .from('menu_items')
+                                .insert([databasePayload]);
+
                             if (restoreError) {
                                 toast({ title: 'Restore failed', description: restoreError.message, variant: 'destructive' });
                                 return;

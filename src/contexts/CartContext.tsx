@@ -30,7 +30,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   
-  // Changed default to 0 or your most common fee to avoid "flicker"
+  // Default to 0 to avoid computational layout "flicker" on initial paint
   const [deliveryFee, setDeliveryFee] = useState<number>(0); 
 
   const fetchDeliveryFee = useCallback(async () => {
@@ -46,22 +46,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      if (data && (data as any).value) {
-        // Ensure we parse the string value from database into a number
-        const fee = parseFloat((data as any).value);
-        setDeliveryFee(isNaN(fee) ? 0 : fee);
+      if (data && (data as any).value !== undefined) {
+        // Safe robust float parsing from the newly converted text database column
+        const parsedFee = parseFloat((data as any).value);
+        setDeliveryFee(isNaN(parsedFee) ? 0 : parsedFee);
       }
     } catch (err) {
       console.error("Error fetching delivery fee:", err);
     }
   }, []);
 
-  // 1. Initial Fetch
+  // 1. Initial Fetch on Mount
   useEffect(() => {
     fetchDeliveryFee();
   }, [fetchDeliveryFee]);
 
-  // 2. REAL-TIME UPDATE: Listen for changes in the app_settings table
+  // 2. REAL-TIME DATABASE SUBSCRIPTION: Listens for updates live
   useEffect(() => {
     const channel = supabase
       .channel('schema-db-changes')
@@ -74,8 +74,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           filter: `key=eq.delivery_fee`
         },
         (payload) => {
-          if (payload.new && (payload.new as any).value) {
-            setDeliveryFee(Number((payload.new as any).value));
+          if (payload.new && (payload.new as any).value !== undefined) {
+            // Safe parsing to ensure real-time changes don't inject bad string data types
+            const realTimeFee = Number((payload.new as any).value);
+            setDeliveryFee(isNaN(realTimeFee) ? 0 : realTimeFee);
           }
         }
       )

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Clock, MapPin, ArrowRight, MessageCircle, Instagram, Facebook, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, MapPin, ArrowRight, Instagram, Facebook, ChevronLeft, ChevronRight } from 'lucide-react';
+import { SiWhatsapp } from 'react-icons/si';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getImage } from '@/lib/imageMap';
@@ -293,11 +294,11 @@ const Index = () => {
             {[
               { icon: Clock, title: "Opening Hours", lines: ["Mon – Fri: 7 AM – 9 PM", "Sat – Sun: 8 AM – 10 PM"] },
               { icon: MapPin, title: "Our Location", lines: ["164-A, Sector C, Gulmohar,", "Bahria Town, Lahore"] },
-              { icon: MessageCircle, title: "Community", lines: ["Join our WhatsApp community"], link: true }
+              { icon: SiWhatsapp, title: "Community", lines: ["Join our WhatsApp community"], link: true }
             ].map((item, i) => (
               <div key={i} className="warm-card bg-card p-10 text-center group">
                 <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-5 transition-colors duration-300 group-hover:bg-accent/20">
-                  <item.icon className="text-accent" size={26} strokeWidth={1.5} />
+                  <item.icon className="text-accent" size={26} />
                 </div>
                 <h3 className="font-serif text-lg font-semibold mb-3 text-foreground">{item.title}</h3>
                 {item.lines.map((line, idx) => (
@@ -319,10 +320,10 @@ const Index = () => {
               {[
                 { icon: Instagram, url: "https://www.instagram.com/eighty_pluscoffee/", label: "Instagram" },
                 { icon: Facebook, url: "https://www.facebook.com/people/Eighty-Plus/61572608946241/", label: "Facebook" },
-                { icon: MessageCircle, url: buildWhatsAppChatUrl(), label: "WhatsApp" }
+                { icon: SiWhatsapp, url: buildWhatsAppChatUrl(), label: "WhatsApp" }
               ].map((social, i) => (
                 <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-card border border-border/60 flex items-center justify-center hover:bg-secondary hover:scale-110 transition-all duration-300 relative z-50" aria-label={social.label}>
-                  <social.icon size={20} className="text-accent" strokeWidth={1.5} />
+                  <social.icon size={20} className="text-accent" />
                 </a>
               ))}
             </div>

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Phone, Mail, MapPin, Instagram, Facebook, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Facebook, Send, Loader2 } from 'lucide-react';
+import { SiWhatsapp } from 'react-icons/si';
 import { buildWhatsAppChatUrl } from '@/lib/whatsapp';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -110,7 +111,7 @@ const ContactPage = () => {
                 {[
                   { icon: Instagram, url: "https://www.instagram.com/eighty_pluscoffee" },
                   { icon: Facebook, url: "https://www.facebook.com/people/Eighty-Plus/61572608946241/" },
-                  { icon: MessageCircle, url: buildWhatsAppChatUrl() }
+                  { icon: SiWhatsapp, url: buildWhatsAppChatUrl() }
                 ].map((social, i) => (
                   <a 
                     key={i} 

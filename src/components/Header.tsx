@@ -5,7 +5,6 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.jpeg';
-import { LanguageToggle } from '@/components/LanguageToggle';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const navLinks = [
@@ -138,49 +137,17 @@ const Header = () => {
     <>
       <header className={`fixed inset-x-0 transition-all duration-300 ease-in-out z-[9999] flex flex-col ${hasAnnouncement ? 'top-[41px]' : 'top-0'}`}>
         
-        {/* SOCIAL LINKS & LANGUAGE BAR */}
-        <div className="bg-background/90 border-b border-border/10 text-muted-foreground">
-          <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-2 text-[11px] uppercase tracking-[0.25em]">
-              <div className="flex flex-wrap items-center gap-4">
-                {showHeaderPhone && (
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Phone size={14} /> {headerPhone}
-                  </span>
-                )}
-                {showHeaderLocation && (
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin size={14} /> {headerLocation}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-3">
-                {showHeaderInstagram && (
-                  <a href={instagramUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                    <Instagram size={16} /> Instagram
-                  </a>
-                )}
-                {showHeaderFacebook && (
-                  <a href={facebookUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                    <Facebook size={16} /> Facebook
-                  </a>
-                )}
-                {showHeaderWhatsApp && (
-                  <a href={whatsappLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                    <Phone size={16} /> WhatsApp
-                  </a>
-                )}
-                <LanguageToggle />
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* MAIN NAVIGATION ROW */}
         <div className={`${headerBg} transition-all duration-300`}>
-          <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10">
+          <div className="container-narrow mx-auto">
             <div className="flex items-center justify-between h-20 sm:h-24 transition-all duration-300">
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setMobileOpen(!mobileOpen)} 
+                  className={`lg:hidden p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
+                >
+                  {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                </button>
                 <Link to="/" className="flex items-center gap-3 group">
                   <img 
                     src={logoImg} 
@@ -194,7 +161,7 @@ const Header = () => {
               </div>
 
               {/* Desktop Nav Links */}
-              <nav className="hidden xl:flex items-center gap-1">
+              <nav className="hidden lg:flex items-center gap-1">
                 {navLinks.map(link => {
                   const isActive = location.pathname === link.to;
                   return (
@@ -278,13 +245,6 @@ const Header = () => {
                 >
                   {user ? 'Profile' : 'Login'}
                 </Link>
-
-                <button 
-                  onClick={() => setMobileOpen(!mobileOpen)} 
-                  className={`xl:hidden p-2.5 rounded-full ${textColor} ${iconHoverBg} transition-colors`}
-                >
-                  {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
               </div>
             </div>
           </div>
@@ -292,7 +252,7 @@ const Header = () => {
 
         {/* Responsive Mobile Drawer Menu */}
         {mobileOpen && (
-          <div className="xl:hidden bg-background border-t border-border absolute top-full left-0 w-full shadow-2xl animate-in slide-in-from-top duration-300">
+          <div className="lg:hidden bg-background border-t border-border absolute top-full left-0 w-full shadow-2xl animate-in slide-in-from-top duration-300">
             <nav className="flex flex-col p-4 max-h-[80vh] overflow-y-auto">
               {navLinks.map(link => (
                 <Link

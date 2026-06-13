@@ -84,6 +84,7 @@ const MenuPage = () => {
       price: item.price_num,
       image: getMenuItemImage(item),
       category: categoryName,
+      stock: item.stock,
     });
 
     setAddedIds(prev => new Set(prev).add(uniqueId));

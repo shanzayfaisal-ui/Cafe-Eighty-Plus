@@ -93,8 +93,8 @@ const AppContent = () => {
     : isHomePage
     ? "pt-0"
     : hasAnnouncement
-    ? "pt-[210px] sm:pt-[190px]"
-    : "pt-[170px] sm:pt-[150px]";
+    ? "pt-[150px] sm:pt-[130px]"
+    : "pt-[120px] sm:pt-[110px]";
 
   return (
     <div 

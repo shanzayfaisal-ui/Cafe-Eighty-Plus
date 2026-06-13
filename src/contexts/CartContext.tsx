@@ -8,11 +8,12 @@ export interface CartItem {
   image: string;
   quantity: number;
   category: string;
+  stock?: number;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, 'quantity'>) => void;
+  addItem: (item: Omit<CartItem, 'quantity'> & { stock?: number }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -88,12 +89,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const addItem = useCallback((item: Omit<CartItem, 'quantity'>) => {
+  const addItem = useCallback((item: Omit<CartItem, 'quantity'> & { stock?: number }) => {
     setItems(prev => {
+      const availableStock = typeof item.stock === 'number' ? item.stock : Number.POSITIVE_INFINITY;
+
+      if (availableStock <= 0) {
+        return prev;
+      }
+
       const existing = prev.find(i => i.id === item.id);
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+        const nextQuantity = existing.quantity + 1;
+        if (nextQuantity > availableStock) {
+          return prev;
+        }
+        return prev.map(i => i.id === item.id ? { ...i, quantity: nextQuantity } : i);
       }
+
       return [...prev, { ...item, quantity: 1 }];
     });
   }, []);
@@ -103,11 +115,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
-    if (quantity <= 0) {
-      setItems(prev => prev.filter(i => i.id !== id));
-    } else {
-      setItems(prev => prev.map(i => i.id === id ? { ...i, quantity } : i));
-    }
+    setItems(prev => {
+      const existing = prev.find(i => i.id === id);
+      if (!existing) return prev;
+
+      const maxQuantity = typeof existing.stock === 'number' ? existing.stock : Number.POSITIVE_INFINITY;
+      const safeQuantity = Math.min(Math.max(quantity, 0), maxQuantity);
+
+      if (safeQuantity <= 0) {
+        return prev.filter(i => i.id !== id);
+      }
+
+      return prev.map(i => i.id === id ? { ...i, quantity: safeQuantity } : i);
+    });
   }, []);
 
   const clearCart = useCallback(() => setItems([]), []);

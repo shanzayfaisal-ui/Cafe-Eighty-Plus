@@ -123,7 +123,8 @@ const OrderPage = () => {
       name: item.name, 
       price: item.price_num, 
       image: item.image_url || getImage(item.image_key), 
-      category: item.category_name 
+      category: item.category_name,
+      stock: item.stock,
     });
     setAddedIds(prev => new Set(prev).add(item.id));
     setTimeout(() => {

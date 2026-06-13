@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Clock, Phone, Mail, Instagram, Facebook, MessageCircle, ArrowRight } from 'lucide-react';
+import { MapPin, Clock, Phone, Mail, Instagram, Facebook, ArrowRight } from 'lucide-react';
+import { SiWhatsapp } from 'react-icons/si';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const Footer = () => {
@@ -41,7 +42,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-b from-espresso to-[#2a1f1a] text-espresso-foreground">
     
-    <div className="container-narrow mx-auto px-5 sm:px-8 lg:px-10 py-20 sm:py-24">
+    <div className="container-narrow mx-auto py-16 sm:py-20">
       
       {/* TOP SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
@@ -196,7 +197,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="relative group w-12 h-12 rounded-full bg-white/5 flex items-center justify-center backdrop-blur-md border border-white/10 shadow-lg transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:bg-green-500/20"
               >
-                <MessageCircle size={18} className="transition-all duration-300 group-hover:text-green-400" />
+                <SiWhatsapp size={18} className="transition-all duration-300 group-hover:text-green-400" />
                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 text-xs rounded-md bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
                   WhatsApp
                 </span>

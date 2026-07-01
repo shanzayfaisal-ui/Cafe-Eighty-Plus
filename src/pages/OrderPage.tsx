@@ -142,7 +142,7 @@ const OrderPage = () => {
         <div className="text-center mb-12 animate-fade-in">
           <p className="text-accent text-sm font-medium tracking-widest uppercase mb-2">Delivery & Pickup</p>
           <h1 className="text-4xl sm:text-5xl font-serif font-bold">Order Online</h1>
-          <p className="text-muted-foreground mt-3">Add items to cart and order via WhatsApp</p>
+          <p className="text-muted-foreground mt-3">Add items to cart and order online</p>
         </div>
 
         <div className="flex flex-wrap gap-2 justify-center mb-10">

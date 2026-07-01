@@ -105,15 +105,24 @@ CREATE TABLE IF NOT EXISTS public.contact_messages (
   email TEXT NOT NULL,
   subject TEXT NOT NULL,
   message TEXT NOT NULL,
+  is_read BOOLEAN NOT NULL DEFAULT false,
+  is_replied BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.contact_messages;
 DROP POLICY IF EXISTS "Anyone can submit contact messages" ON public.contact_messages;
 CREATE POLICY "Anyone can submit contact messages"
   ON public.contact_messages FOR INSERT WITH CHECK (true);
-DROP POLICY IF EXISTS "Authenticated users can read contact messages" ON public.contact_messages;
-CREATE POLICY "Authenticated users can read contact messages"
-  ON public.contact_messages FOR SELECT USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Anyone can read contact messages" ON public.contact_messages;
+CREATE POLICY "Anyone can read contact messages"
+  ON public.contact_messages FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Anyone can update contact messages" ON public.contact_messages;
+CREATE POLICY "Anyone can update contact messages"
+  ON public.contact_messages FOR UPDATE USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Anyone can delete contact messages" ON public.contact_messages;
+CREATE POLICY "Anyone can delete contact messages"
+  ON public.contact_messages FOR DELETE USING (true);
 
 CREATE TABLE IF NOT EXISTS public.orders (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,

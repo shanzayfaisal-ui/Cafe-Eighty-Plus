@@ -31,8 +31,13 @@ const AdminMessagesPage = () => {
 
       if (error) throw error;
 
-      // 2. Type cast the data so TypeScript doesn't throw errors on is_read/is_replied
-      setMessages((data as ContactMessage[]) || []);
+      const normalized = (data || []).map((item: any) => ({
+        ...item,
+        is_read: Boolean(item?.is_read),
+        is_replied: Boolean(item?.is_replied),
+      })) as ContactMessage[];
+
+      setMessages(normalized);
     } catch (error: any) {
       console.error("Fetch Error:", error.message);
       toast.error("Failed to load messages");
@@ -57,7 +62,6 @@ const AdminMessagesPage = () => {
 
       if (error) throw error;
       
-      // Update local state immediately
       setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: true } : m));
     } catch (error: any) {
       console.error("Update Error:", error.message);

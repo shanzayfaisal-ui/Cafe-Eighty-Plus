@@ -31,6 +31,7 @@ const AdminLayout = ({ title, description, children }: AdminLayoutProps) => {
   const [adminEmail, setAdminEmail] = useState('Admin');
   const [loggingOut, setLoggingOut] = useState(false);
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
+  const [pendingMessagesCount, setPendingMessagesCount] = useState(0);
 
   // --- REAL-TIME PENDING ORDERS COUNT ---
   useEffect(() => {
@@ -65,12 +66,38 @@ const AdminLayout = ({ title, description, children }: AdminLayoutProps) => {
     { label: 'Stock Levels', to: '/admin/stock', icon: Package },     
     { label: 'Categories', to: '/admin/categories', icon: ListTree },
     { label: 'Gallery', to: '/admin/gallery', icon: Image },
-    { label: 'Messages', to: '/admin/messages', icon: MessageSquare },
+    { label: 'Messages', to: '/admin/messages', icon: MessageSquare, badge: pendingMessagesCount },
     { label: 'Announcements', to: '/admin/announcements', icon: Megaphone },
     { label: 'Reviews', to: '/admin/reviews', icon: Star },
     { label: 'Coffee Guide', to: '/admin/coffee-guide', icon: BookOpen }, 
     { label: 'Settings', to: '/admin/settings', icon: Settings },
-  ], [pendingOrdersCount]);
+  ], [pendingOrdersCount, pendingMessagesCount]);
+
+  // --- REAL-TIME UNREAD MESSAGES COUNT ---
+  useEffect(() => {
+    const fetchMessageCount = async () => {
+      const { count, error } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false);
+
+      if (!error) setPendingMessagesCount(count || 0);
+    };
+
+    fetchMessageCount();
+
+    const channel = supabase
+      .channel('admin-sidebar-message-counts')
+      .on('postgres_changes' as any,
+        { event: '*', table: 'contact_messages' },
+        () => { fetchMessageCount(); }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
